@@ -1,0 +1,68 @@
+.card {
+    display: flex;
+    transform: translateX(85%);
+    justify-content: space-between;
+    width: 31rem;
+    padding: 0;
+}
+.card-a {
+    height: 217px;
+    width: 29rem;
+    padding: 0;
+}
+body {
+    background-color: rgb(255, 240, 240);
+}
+h1 {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 41px;
+    color: rgb(92, 92, 247);
+}
+.home {
+    display: flex;
+    transform: translateX(11%) translateY(-123%);
+    font-size: 15px;
+    width: 1300px;
+}
+.btn-a {
+    background-color: rgba(0, 0, 255, 0.801);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    height: 34px;
+    width: 120px;
+    font-size: 17px;
+    padding: 0;
+}
+.btn-b {
+    background-color: rgba(0, 0, 255, 0.801);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    height: 34px;
+    width: 120px;
+    font-size: 17px;
+    padding: 0;
+}
+.come {
+    display: flex;
+    transform: translateX(11%) translateY(-123%);
+    font-size: 15px;
+    width: 1300px;
+}
+.btn-c {
+    transform: translateY(-2542%) translateX(1000%);
+    background-color: rgba(0, 0, 255, 0.801);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    height: 34px;
+    width: 120px;
+    font-size: 17px;
+    padding: 0;
+}
+p {
+    display: flex;
+    transform: translateY(-310%);
+}
