@@ -216,11 +216,58 @@ def delete_alumno(id):
 # Endpoints para AlumnoAsignatura
 @app.route('/alumno_asignatura', methods=['POST'])
 def create_alumno_asignatura():
-    """
-    Crea una nueva relación entre alumno y asignatura con una calificación.
-    """
     data = request.json
     nuevo_alumno_asignatura = AlumnoAsignatura(
         id_alumno=data['id_alumno'],
         id_asignatura=data['id_asignatura'],
-        calificacion=data['
+        calificacion=data['calificacion']
+    )
+    db.session.add(nuevo_alumno_asignatura)
+    db.session.commit()
+    return jsonify(nuevo_alumno_asignatura.serialize()), 201
+
+@app.route('/alumno_asignatura/<int:id>', methods=['GET'])
+def get_alumno_asignatura(id):
+    alumno_asignatura = AlumnoAsignatura.query.get_or_404(id)
+    return jsonify(alumno_asignatura.serialize())
+
+@app.route('/alumno_asignatura/<int:id>', methods=['PUT'])
+def update_alumno_asignatura(id):
+    data = request.json
+    alumno_asignatura = AlumnoAsignatura.query.get_or_404(id)
+    alumno_asignatura.id_alumno = data.get('id_alumno', alumno_asignatura.id_alumno)
+    alumno_asignatura.id_asignatura = data.get('id_asignatura', alumno_asignatura.id_asignatura)
+    alumno_asignatura.calificacion = data.get('calificacion', alumno_asignatura.calificacion)
+    db.session.commit()
+    return jsonify(alumno_asignatura.serialize())
+
+@app.route('/alumno_asignatura/<int:id>', methods=['DELETE'])
+def delete_alumno_asignatura(id):
+    alumno_asignatura = AlumnoAsignatura.query.get_or_404(id)
+    db.session.delete(alumno_asignatura)
+    db.session.commit()
+    return '', 204
+
+# Endpoints para Recomendacion
+@app.route('/recomendacion', methods=['POST'])
+def create_recomendacion():
+    data = request.json
+    nueva_recomendacion = Recomendacion(
+        id_alumno=data['id_alumno'],
+        recomendacion=data['recomendacion']
+    )
+    db.session.add(nueva_recomendacion)
+    db.session.commit()
+    return jsonify(nueva_recomendacion.serialize()), 201
+
+@app.route('/recomendacion/<int:id>', methods=['GET'])
+def get_recomendacion(id):
+    recomendacion = Recomendacion.query.get_or_404(id)
+    return jsonify(recomendacion.serialize())
+
+@app.route('/recomendacion/<int:id>', methods=['PUT'])
+def update_recomendacion(id):
+    data = request.json
+    recomendacion = Recomendacion.query.get_or_404(id)
+    recomendacion.id_alumno = data.get('id_alumno', recomendacion.id_alumno)
+    recomendacion.recomendacion
