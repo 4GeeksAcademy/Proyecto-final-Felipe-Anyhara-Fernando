@@ -1,99 +1,226 @@
-"""
-This module takes care of starting the API Server, Loading the DB and Adding the endpoints
-"""
-from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User
-from api.utils import generate_sitemap, APIException
-from flask_cors import CORS
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+from flask import Flask, request, jsonify
+from flask_sqlalchemy import SQLAlchemy
 
-api = Blueprint('api', __name__)
+app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///your_database.db'
+db = SQLAlchemy(app)
 
-# Allow CORS requests to this API
-CORS(api)
+# Importación de modelos
+from models import Apoderado, Profesor, Asignatura, Alumno, AlumnoAsignatura, Recomendacion
 
-import logging
+# Endpoints para Apoderado
+@app.route('/apoderado', methods=['POST'])
+def create_apoderado():
+    """
+    Crea un nuevo apoderado.
+    """
+    data = request.json
+    nuevo_apoderado = Apoderado(
+        nombre=data['nombre'],
+        apellido=data['apellido'],
+        correo_electronico=data['correo_electronico'],
+        contrasena=data['contrasena'],
+        esta_activo=data.get('esta_activo', False),
+        telefono=data.get('telefono'),
+        direccion=data.get('direccion')
+    )
+    db.session.add(nuevo_apoderado)
+    db.session.commit()
+    return jsonify(nuevo_apoderado.serialize()), 201
 
-# Configurar el logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+@app.route('/apoderado/<int:id>', methods=['GET'])
+def get_apoderado(id):
+    """
+    Obtiene los detalles de un apoderado específico por ID.
+    """
+    apoderado = Apoderado.query.get_or_404(id)
+    return jsonify(apoderado.serialize())
 
-@api.route('/register', methods=['POST'])
-def handle_register():
-    try:
-        request_body = request.get_json()
-        logger.info(f"Request Body: {request_body}")
+@app.route('/apoderado/<int:id>', methods=['PUT'])
+def update_apoderado(id):
+    """
+    Actualiza la información de un apoderado específico por ID.
+    """
+    data = request.json
+    apoderado = Apoderado.query.get_or_404(id)
+    apoderado.nombre = data.get('nombre', apoderado.nombre)
+    apoderado.apellido = data.get('apellido', apoderado.apellido)
+    apoderado.correo_electronico = data.get('correo_electronico', apoderado.correo_electronico)
+    apoderado.contrasena = data.get('contrasena', apoderado.contrasena)
+    apoderado.esta_activo = data.get('esta_activo', apoderado.esta_activo)
+    apoderado.telefono = data.get('telefono', apoderado.telefono)
+    apoderado.direccion = data.get('direccion', apoderado.direccion)
+    db.session.commit()
+    return jsonify(apoderado.serialize())
 
-        user_email = request_body.get("email", None)
-        user_password = request_body.get("password", None)
-        user_is_active = request_body.get("user_is_active", True)
+@app.route('/apoderado/<int:id>', methods=['DELETE'])
+def delete_apoderado(id):
+    """
+    Elimina un apoderado específico por ID.
+    """
+    apoderado = Apoderado.query.get_or_404(id)
+    db.session.delete(apoderado)
+    db.session.commit()
+    return '', 204
 
-        if not user_email or not user_password:
-            return jsonify({"error": "Email and password are required"}), 401
+# Endpoints para Profesor
+@app.route('/profesor', methods=['POST'])
+def create_profesor():
+    """
+    Crea un nuevo profesor.
+    """
+    data = request.json
+    nuevo_profesor = Profesor(
+        nombre=data['nombre'],
+        apellido=data['apellido'],
+        correo_electronico=data['correo_electronico'],
+        contrasena=data['contrasena'],
+        esta_activo=data.get('esta_activo', False),
+        titulo=data.get('titulo'),
+        especializacion=data.get('especializacion')
+    )
+    db.session.add(nuevo_profesor)
+    db.session.commit()
+    return jsonify(nuevo_profesor.serialize()), 201
 
-        existent_user = User.query.filter_by(email=user_email).first()
-        if existent_user:
-            return jsonify({"error": "The user already exists"}), 401
+@app.route('/profesor/<int:id>', methods=['GET'])
+def get_profesor(id):
+    """
+    Obtiene los detalles de un profesor específico por ID.
+    """
+    profesor = Profesor.query.get_or_404(id)
+    return jsonify(profesor.serialize())
 
-        new_user = User(
-            email=user_email,
-            password=user_password,
-            is_active=user_is_active
-        )
+@app.route('/profesor/<int:id>', methods=['PUT'])
+def update_profesor(id):
+    """
+    Actualiza la información de un profesor específico por ID.
+    """
+    data = request.json
+    profesor = Profesor.query.get_or_404(id)
+    profesor.nombre = data.get('nombre', profesor.nombre)
+    profesor.apellido = data.get('apellido', profesor.apellido)
+    profesor.correo_electronico = data.get('correo_electronico', profesor.correo_electronico)
+    profesor.contrasena = data.get('contrasena', profesor.contrasena)
+    profesor.esta_activo = data.get('esta_activo', profesor.esta_activo)
+    profesor.titulo = data.get('titulo', profesor.titulo)
+    profesor.especializacion = data.get('especializacion', profesor.especializacion)
+    db.session.commit()
+    return jsonify(profesor.serialize())
 
-        db.session.add(new_user)
-        db.session.commit()
+@app.route('/profesor/<int:id>', methods=['DELETE'])
+def delete_profesor(id):
+    """
+    Elimina un profesor específico por ID.
+    """
+    profesor = Profesor.query.get_or_404(id)
+    db.session.delete(profesor)
+    db.session.commit()
+    return '', 204
 
-        return jsonify(new_user.serialize()), 201
-    except Exception as e:
-        logger.error(f"Error: {str(e)}")
-        return jsonify({"error": str(e)}), 500
+# Endpoints para Asignatura
+@app.route('/asignatura', methods=['POST'])
+def create_asignatura():
+    """
+    Crea una nueva asignatura.
+    """
+    data = request.json
+    nueva_asignatura = Asignatura(
+        nombre=data['nombre'],
+        id_profesor=data['id_profesor']
+    )
+    db.session.add(nueva_asignatura)
+    db.session.commit()
+    return jsonify(nueva_asignatura.serialize()), 201
 
-    
-@api.route("/private", methods=["GET"])
-@jwt_required()
-def private():
-    
-    current_user_id = get_jwt_identity()
-    user = User.query.get(current_user_id)
+@app.route('/asignatura/<int:id>', methods=['GET'])
+def get_asignatura(id):
+    """
+    Obtiene los detalles de una asignatura específica por ID.
+    """
+    asignatura = Asignatura.query.get_or_404(id)
+    return jsonify(asignatura.serialize())
 
-    print(f", ID: {user.id}, Password: {user.password}")
-    return jsonify({"id": user.id, "email": user.email }), 200
+@app.route('/asignatura/<int:id>', methods=['PUT'])
+def update_asignatura(id):
+    """
+    Actualiza la información de una asignatura específica por ID.
+    """
+    data = request.json
+    asignatura = Asignatura.query.get_or_404(id)
+    asignatura.nombre = data.get('nombre', asignatura.nombre)
+    asignatura.id_profesor = data.get('id_profesor', asignatura.id_profesor)
+    db.session.commit()
+    return jsonify(asignatura.serialize())
 
-@api.route("/user", methods=["GET"])
-@jwt_required()
-def get_user():
-    try:
-        current_user_id = get_jwt_identity()
-        user = User.query.get(current_user_id)
+@app.route('/asignatura/<int:id>', methods=['DELETE'])
+def delete_asignatura(id):
+    """
+    Elimina una asignatura específica por ID.
+    """
+    asignatura = Asignatura.query.get_or_404(id)
+    db.session.delete(asignatura)
+    db.session.commit()
+    return '', 204
 
-        if not user:
-            return jsonify({"msg": "User not found"}), 404
+# Endpoints para Alumno
+@app.route('/alumno', methods=['POST'])
+def create_alumno():
+    """
+    Crea un nuevo alumno.
+    """
+    data = request.json
+    nuevo_alumno = Alumno(
+        nombre=data['nombre'],
+        apellido=data['apellido'],
+        id_apoderado=data['id_apoderado'],
+        esta_activo=data.get('esta_activo', False)
+    )
+    db.session.add(nuevo_alumno)
+    db.session.commit()
+    return jsonify(nuevo_alumno.serialize()), 201
 
-        return jsonify({"user": user.serialize()}), 200
-    except Exception as e:
-        logger.error(f"Error: {str(e)}")
-        return jsonify({"error": str(e)}), 500
+@app.route('/alumno/<int:id>', methods=['GET'])
+def get_alumno(id):
+    """
+    Obtiene los detalles de un alumno específico por ID.
+    """
+    alumno = Alumno.query.get_or_404(id)
+    return jsonify(alumno.serialize())
 
+@app.route('/alumno/<int:id>', methods=['PUT'])
+def update_alumno(id):
+    """
+    Actualiza la información de un alumno específico por ID.
+    Expects JSON with fields to update: nombre, apellido, id_apoderado, esta_activo.
+    """
+    data = request.json
+    alumno = Alumno.query.get_or_404(id)
+    alumno.nombre = data.get('nombre', alumno.nombre)
+    alumno.apellido = data.get('apellido', alumno.apellido)
+    alumno.id_apoderado = data.get('id_apoderado', alumno.id_apoderado)
+    alumno.esta_activo = data.get('esta_activo', alumno.esta_activo)
+    db.session.commit()
+    return jsonify(alumno.serialize())
 
-@api.route('/login', methods=['POST'])
-def handle_login():
-    try:
-        request_body = request.get_json()
-        email = request_body.get("email", None)
-        password = request_body.get("password", None)
+@app.route('/alumno/<int:id>', methods=['DELETE'])
+def delete_alumno(id):
+    """
+    Elimina un alumno específico por ID.
+    """
+    alumno = Alumno.query.get_or_404(id)
+    db.session.delete(alumno)
+    db.session.commit()
+    return '', 204
 
-        if not email or not password:
-            return jsonify({"msg": "Email and password are required"}), 400
-
-        user = User.query.filter_by(email=email).first()
-        if not user or not user.password == password:
-            return jsonify({"msg": "Bad email or password"}), 401
-
-        access_token = create_access_token(identity=user.id)
-        return jsonify({"token": access_token}), 200
-    except Exception as e:
-        logger.error(f"Error: {str(e)}")
-        return jsonify({"error": str(e)}), 500
-
-    
+# Endpoints para AlumnoAsignatura
+@app.route('/alumno_asignatura', methods=['POST'])
+def create_alumno_asignatura():
+    """
+    Crea una nueva relación entre alumno y asignatura con una calificación.
+    """
+    data = request.json
+    nuevo_alumno_asignatura = AlumnoAsignatura(
+        id_alumno=data['id_alumno'],
+        id_asignatura=data['id_asignatura'],
+        calificacion=data['
