@@ -1,15 +1,12 @@
-from flask import Flask, request, jsonify
+from flask import Flask, Blueprint, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
-
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///your_database.db'
-db = SQLAlchemy(app)
-
+from app import db
 # Importación de modelos
-from models import Apoderado, Profesor, Asignatura, Alumno, AlumnoAsignatura, Recomendacion
-
+from api.models import Apoderado, Profesor, Asignatura, Alumno, AlumnoAsignatura, Recomendacion
+# Define el Blueprint
+api = Blueprint('api', __name__)
 # Endpoints para Apoderado
-@app.route('/apoderado', methods=['POST'])
+@api.route('/apoderado', methods=['POST'])
 def create_apoderado():
     """
     Crea un nuevo apoderado.
@@ -27,16 +24,14 @@ def create_apoderado():
     db.session.add(nuevo_apoderado)
     db.session.commit()
     return jsonify(nuevo_apoderado.serialize()), 201
-
-@app.route('/apoderado/<int:id>', methods=['GET'])
+@api.route('/apoderado/<int:id>', methods=['GET'])
 def get_apoderado(id):
     """
     Obtiene los detalles de un apoderado específico por ID.
     """
     apoderado = Apoderado.query.get_or_404(id)
     return jsonify(apoderado.serialize())
-
-@app.route('/apoderado/<int:id>', methods=['PUT'])
+@api.route('/apoderado/<int:id>', methods=['PUT'])
 def update_apoderado(id):
     """
     Actualiza la información de un apoderado específico por ID.
@@ -52,8 +47,7 @@ def update_apoderado(id):
     apoderado.direccion = data.get('direccion', apoderado.direccion)
     db.session.commit()
     return jsonify(apoderado.serialize())
-
-@app.route('/apoderado/<int:id>', methods=['DELETE'])
+@api.route('/apoderado/<int:id>', methods=['DELETE'])
 def delete_apoderado(id):
     """
     Elimina un apoderado específico por ID.
@@ -62,9 +56,8 @@ def delete_apoderado(id):
     db.session.delete(apoderado)
     db.session.commit()
     return '', 204
-
 # Endpoints para Profesor
-@app.route('/profesor', methods=['POST'])
+@api.route('/profesor', methods=['POST'])
 def create_profesor():
     """
     Crea un nuevo profesor.
@@ -82,16 +75,14 @@ def create_profesor():
     db.session.add(nuevo_profesor)
     db.session.commit()
     return jsonify(nuevo_profesor.serialize()), 201
-
-@app.route('/profesor/<int:id>', methods=['GET'])
+@api.route('/profesor/<int:id>', methods=['GET'])
 def get_profesor(id):
     """
     Obtiene los detalles de un profesor específico por ID.
     """
     profesor = Profesor.query.get_or_404(id)
     return jsonify(profesor.serialize())
-
-@app.route('/profesor/<int:id>', methods=['PUT'])
+@api.route('/profesor/<int:id>', methods=['PUT'])
 def update_profesor(id):
     """
     Actualiza la información de un profesor específico por ID.
@@ -107,8 +98,7 @@ def update_profesor(id):
     profesor.especializacion = data.get('especializacion', profesor.especializacion)
     db.session.commit()
     return jsonify(profesor.serialize())
-
-@app.route('/profesor/<int:id>', methods=['DELETE'])
+@api.route('/profesor/<int:id>', methods=['DELETE'])
 def delete_profesor(id):
     """
     Elimina un profesor específico por ID.
@@ -117,9 +107,8 @@ def delete_profesor(id):
     db.session.delete(profesor)
     db.session.commit()
     return '', 204
-
 # Endpoints para Asignatura
-@app.route('/asignatura', methods=['POST'])
+@api.route('/asignatura', methods=['POST'])
 def create_asignatura():
     """
     Crea una nueva asignatura.
@@ -132,16 +121,14 @@ def create_asignatura():
     db.session.add(nueva_asignatura)
     db.session.commit()
     return jsonify(nueva_asignatura.serialize()), 201
-
-@app.route('/asignatura/<int:id>', methods=['GET'])
+@api.route('/asignatura/<int:id>', methods=['GET'])
 def get_asignatura(id):
     """
     Obtiene los detalles de una asignatura específica por ID.
     """
     asignatura = Asignatura.query.get_or_404(id)
     return jsonify(asignatura.serialize())
-
-@app.route('/asignatura/<int:id>', methods=['PUT'])
+@api.route('/asignatura/<int:id>', methods=['PUT'])
 def update_asignatura(id):
     """
     Actualiza la información de una asignatura específica por ID.
@@ -152,8 +139,7 @@ def update_asignatura(id):
     asignatura.id_profesor = data.get('id_profesor', asignatura.id_profesor)
     db.session.commit()
     return jsonify(asignatura.serialize())
-
-@app.route('/asignatura/<int:id>', methods=['DELETE'])
+@api.route('/asignatura/<int:id>', methods=['DELETE'])
 def delete_asignatura(id):
     """
     Elimina una asignatura específica por ID.
@@ -162,9 +148,8 @@ def delete_asignatura(id):
     db.session.delete(asignatura)
     db.session.commit()
     return '', 204
-
 # Endpoints para Alumno
-@app.route('/alumno', methods=['POST'])
+@api.route('/alumno', methods=['POST'])
 def create_alumno():
     """
     Crea un nuevo alumno.
@@ -179,16 +164,14 @@ def create_alumno():
     db.session.add(nuevo_alumno)
     db.session.commit()
     return jsonify(nuevo_alumno.serialize()), 201
-
-@app.route('/alumno/<int:id>', methods=['GET'])
+@api.route('/alumno/<int:id>', methods=['GET'])
 def get_alumno(id):
     """
     Obtiene los detalles de un alumno específico por ID.
     """
     alumno = Alumno.query.get_or_404(id)
     return jsonify(alumno.serialize())
-
-@app.route('/alumno/<int:id>', methods=['PUT'])
+@api.route('/alumno/<int:id>', methods=['PUT'])
 def update_alumno(id):
     """
     Actualiza la información de un alumno específico por ID.
@@ -202,8 +185,7 @@ def update_alumno(id):
     alumno.esta_activo = data.get('esta_activo', alumno.esta_activo)
     db.session.commit()
     return jsonify(alumno.serialize())
-
-@app.route('/alumno/<int:id>', methods=['DELETE'])
+@api.route('/alumno/<int:id>', methods=['DELETE'])
 def delete_alumno(id):
     """
     Elimina un alumno específico por ID.
@@ -212,9 +194,8 @@ def delete_alumno(id):
     db.session.delete(alumno)
     db.session.commit()
     return '', 204
-
 # Endpoints para AlumnoAsignatura
-@app.route('/alumno_asignatura', methods=['POST'])
+@api.route('/alumno_asignatura', methods=['POST'])
 def create_alumno_asignatura():
     data = request.json
     nuevo_alumno_asignatura = AlumnoAsignatura(
@@ -225,13 +206,11 @@ def create_alumno_asignatura():
     db.session.add(nuevo_alumno_asignatura)
     db.session.commit()
     return jsonify(nuevo_alumno_asignatura.serialize()), 201
-
-@app.route('/alumno_asignatura/<int:id>', methods=['GET'])
+@api.route('/alumno_asignatura/<int:id>', methods=['GET'])
 def get_alumno_asignatura(id):
     alumno_asignatura = AlumnoAsignatura.query.get_or_404(id)
     return jsonify(alumno_asignatura.serialize())
-
-@app.route('/alumno_asignatura/<int:id>', methods=['PUT'])
+@api.route('/alumno_asignatura/<int:id>', methods=['PUT'])
 def update_alumno_asignatura(id):
     data = request.json
     alumno_asignatura = AlumnoAsignatura.query.get_or_404(id)
@@ -240,16 +219,14 @@ def update_alumno_asignatura(id):
     alumno_asignatura.calificacion = data.get('calificacion', alumno_asignatura.calificacion)
     db.session.commit()
     return jsonify(alumno_asignatura.serialize())
-
-@app.route('/alumno_asignatura/<int:id>', methods=['DELETE'])
+@api.route('/alumno_asignatura/<int:id>', methods=['DELETE'])
 def delete_alumno_asignatura(id):
     alumno_asignatura = AlumnoAsignatura.query.get_or_404(id)
     db.session.delete(alumno_asignatura)
     db.session.commit()
     return '', 204
-
 # Endpoints para Recomendacion
-@app.route('/recomendacion', methods=['POST'])
+@api.route('/recomendacion', methods=['POST'])
 def create_recomendacion():
     data = request.json
     nueva_recomendacion = Recomendacion(
@@ -259,13 +236,11 @@ def create_recomendacion():
     db.session.add(nueva_recomendacion)
     db.session.commit()
     return jsonify(nueva_recomendacion.serialize()), 201
-
-@app.route('/recomendacion/<int:id>', methods=['GET'])
+@api.route('/recomendacion/<int:id>', methods=['GET'])
 def get_recomendacion(id):
     recomendacion = Recomendacion.query.get_or_404(id)
     return jsonify(recomendacion.serialize())
-
-@app.route('/recomendacion/<int:id>', methods=['PUT'])
+@api.route('/recomendacion/<int:id>', methods=['PUT'])
 def update_recomendacion(id):
     data = request.json
     recomendacion = Recomendacion.query.get_or_404(id)
