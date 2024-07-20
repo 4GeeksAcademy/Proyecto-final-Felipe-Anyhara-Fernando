@@ -1,7 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Column, ForeignKey, Integer, String, Boolean, Text, Float, Table
 from sqlalchemy.orm import relationship, declarative_base
-from eralchemy2 import render_er
 
 db = SQLAlchemy()
 Base = declarative_base()
@@ -117,10 +116,3 @@ class Recomendacion(db.Model):
             "alumno": self.alumno.serialize() if self.alumno else None,
             "recomendacion": self.recomendacion
         }
-
-try:
-    result = render_er(Base, 'diagram.png')
-    print("Success! Check the diagram.png file")
-except Exception as e:
-    print("There was a problem generating the diagram")
-    raise e
