@@ -8,6 +8,22 @@ body {
   height: 100vh; /* Establece la altura del body al 100% del viewport height */
 }
 
+.contenedor-boton {
+  margin-top: 200px;
+}
+
+/* Asegúrate de que los botones se apilen en pantallas pequeñas */
+@media (max-width: 576px) {
+  .btn {
+      display: block;
+      width: 100%;
+  }
+  .me-2 {
+      margin-right: 0 !important;
+  }
+}
+
+
 
 .navbar-text{
     color: #f0ad4e; 

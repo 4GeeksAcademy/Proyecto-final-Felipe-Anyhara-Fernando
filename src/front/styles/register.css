@@ -1,0 +1,43 @@
+.contenedor-principal-form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Altura completa de la pantalla */
+}
+
+.contenedor-form {
+    max-width: 400px; /* Ajusta el ancho máximo del formulario */
+    width: 100%;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #ffffff; /* Fondo blanco */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+}
+
+.titulo-form {
+    text-align: center;
+    color: #343a40;
+}
+
+.input-group-text {
+    cursor: pointer;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #004085;
+}
+
+.link-warning {
+    color: #ffc107;
+    text-decoration: none;
+}
+
+.link-warning:hover {
+    text-decoration: underline;
+}
