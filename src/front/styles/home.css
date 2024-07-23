@@ -1,11 +1,17 @@
 body {
-  margin: 0; /* Elimina el margen por defecto del body */
-  padding: 0; /* Elimina el relleno por defecto del body */
+  margin: 0;
+  /* Elimina el margen por defecto del body */
+  padding: 0;
+  /* Elimina el relleno por defecto del body */
   background-image: url("https://img.freepik.com/vector-gratis/fondo-educacion-estilo-doodle_53876-115365.jpg?t=st=1721693747~exp=1721697347~hmac=35fd53dc2d289a518e17ee2230ee3f6faf595055a7857cb68de819e00a5074b2&w=740");
-  background-repeat: no-repeat; /* Evita que la imagen de fondo se repita */
-  background-size: cover; /* Hace que la imagen de fondo cubra todo el contenido visible */
-  background-position: center; /* Centra la imagen de fondo */
-  height: 100vh; /* Establece la altura del body al 100% del viewport height */
+  background-repeat: no-repeat;
+  /* Evita que la imagen de fondo se repita */
+  background-size: cover;
+  /* Hace que la imagen de fondo cubra todo el contenido visible */
+  background-position: center;
+  /* Centra la imagen de fondo */
+  height: 100vh;
+  /* Establece la altura del body al 100% del viewport height */
 }
 
 .contenedor-boton {
@@ -15,17 +21,119 @@ body {
 /* Asegúrate de que los botones se apilen en pantallas pequeñas */
 @media (max-width: 576px) {
   .btn {
-      display: block;
-      width: 100%;
+    display: block;
+    width: 100%;
   }
+
   .me-2 {
-      margin-right: 0 !important;
+    margin-right: 0 !important;
+  }
+}
+
+.boton-login {
+  margin: 20px;
+  width: 200px;
+  padding: 10px;
+  height: 70px;
+  background-color: transparent;
+  border: 1px solid #266DB6;
+  box-sizing: border-box;
+  color: #00132C;
+  font-family: "Avenir Next LT W01 Bold",sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 24px;
+  padding: 16px 23px;
+  position: relative;
+  text-decoration: none;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+.boton-login:before {
+  background-color: #D5EDF6;
+  content: "";
+  height: calc(100% + 3px);
+  position: absolute;
+  right: -7px;
+  top: -9px;
+  transition: background-color 300ms ease-in;
+  width: 100%;
+  z-index: -1;
+}
+
+.boton-login:hover:before {
+  background-color: #6DCFF6;
+}
+
+@media (min-width: 768px) {
+  .boton-login {
+    padding: 16px 32px;
   }
 }
 
 
-
-.navbar-text{
-    color: #f0ad4e; 
+.boton-login:hover {
+  background-color: transparent;
+  cursor: pointer;
 }
 
+/* REGISTRO */
+
+
+.boton-registro:before {
+  background-color: #d5f6e4;
+  content: "";
+  height: calc(100% + 3px);
+  position: absolute;
+  right: -7px;
+  top: -9px;
+  transition: background-color 300ms ease-in;
+  width: 100%;
+  z-index: -1;
+}
+
+.boton-registro:hover,
+.boton-registro:active {
+  outline: 0;
+}
+
+.boton-registro:hover {
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.boton-registro:hover:before {
+  background-color: #6df692;
+}
+
+@media (min-width: 768px) {
+  .boton-registro {
+    padding: 16px 32px;
+  }
+}
+
+
+.boton-registro {
+  width: 200px;
+  padding: 10px;
+  height: 70px;
+  background-color: transparent;
+  border: 1px solid #266DB6;
+  box-sizing: border-box;
+  color: #00132C;
+  font-family: "Avenir Next LT W01 Bold",sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 24px;
+  padding: 16px 23px;
+  position: relative;
+  text-decoration: none;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.navbar-text {
+  color: #f0ad4e;
+}
