@@ -1,68 +1,15 @@
-.card {
-    display: flex;
-    transform: translateX(85%);
-    justify-content: space-between;
-    width: 31rem;
-    padding: 0;
-}
-.card-a {
-    height: 217px;
-    width: 29rem;
-    padding: 0;
-}
 body {
-    background-color: rgb(255, 240, 240);
+  margin: 0; /* Elimina el margen por defecto del body */
+  padding: 0; /* Elimina el relleno por defecto del body */
+  background-image: url("https://img.freepik.com/vector-gratis/fondo-educacion-estilo-doodle_53876-115365.jpg?t=st=1721693747~exp=1721697347~hmac=35fd53dc2d289a518e17ee2230ee3f6faf595055a7857cb68de819e00a5074b2&w=740");
+  background-repeat: no-repeat; /* Evita que la imagen de fondo se repita */
+  background-size: cover; /* Hace que la imagen de fondo cubra todo el contenido visible */
+  background-position: center; /* Centra la imagen de fondo */
+  height: 100vh; /* Establece la altura del body al 100% del viewport height */
 }
-h1 {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 41px;
-    color: rgb(92, 92, 247);
+
+
+.navbar-text{
+    color: #f0ad4e; 
 }
-.home {
-    display: flex;
-    transform: translateX(11%) translateY(-123%);
-    font-size: 15px;
-    width: 1300px;
-}
-.btn-a {
-    background-color: rgba(0, 0, 255, 0.801);
-    color: white;
-    border: none;
-    border-radius: 4px;
-    height: 34px;
-    width: 120px;
-    font-size: 17px;
-    padding: 0;
-}
-.btn-b {
-    background-color: rgba(0, 0, 255, 0.801);
-    color: white;
-    border: none;
-    border-radius: 4px;
-    height: 34px;
-    width: 120px;
-    font-size: 17px;
-    padding: 0;
-}
-.come {
-    display: flex;
-    transform: translateX(11%) translateY(-123%);
-    font-size: 15px;
-    width: 1300px;
-}
-.btn-c {
-    transform: translateY(-2542%) translateX(1000%);
-    background-color: rgba(0, 0, 255, 0.801);
-    color: white;
-    border: none;
-    border-radius: 4px;
-    height: 34px;
-    width: 120px;
-    font-size: 17px;
-    padding: 0;
-}
-p {
-    display: flex;
-    transform: translateY(-310%);
-}
+

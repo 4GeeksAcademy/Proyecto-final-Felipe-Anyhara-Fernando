@@ -21,10 +21,10 @@ export const Login = () => {
 
     return (
         <div className="container-fluid py-3">
-            <h1>Inicia sesión</h1>
+            <h3>Inicia La Sesión</h3>
             <form onSubmit={handleLogin}>
                 <div className="mb-3">
-                    <label htmlFor="email" className="form-label">Email address</label>
+                    <label htmlFor="email" className="form-label">Escribe Tu Dirección Email</label>
                     <input
                         type="email"
                         className="form-control"
@@ -34,7 +34,7 @@ export const Login = () => {
                     />
                 </div>
                 <div className="mb-3">
-                    <label htmlFor="password" className="form-label">Password</label>
+                    <label htmlFor="password" className="form-label">Escribe Tu Contraseña</label>
                     <div className="input-group">
                         <input
                             type={showPassword ? "text" : "password"}
@@ -48,8 +48,10 @@ export const Login = () => {
                         </span>
                     </div>
                 </div>
-                <button type="submit" className="btn-a">Login</button>
-                <Link to="/" className="home">Come Back to Home</Link>
+                <button type="button" className="btn btn-outline-secondary">Ingresar</button>
+                <div>
+                    <Link to="/" className="link-warning mt-5">Volver al inicio</Link>
+                </div>
             </form>
         </div>
     );

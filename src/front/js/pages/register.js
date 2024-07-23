@@ -37,10 +37,10 @@ export const Register = () => {
 
     return (
         <div className="container-fluid py-3">
-            <h1>Registrate</h1>
+            <h1>Registrata Tu Sesión</h1>
             <form onSubmit={handleRegister}>
                 <div className="mb-3">
-                    <label htmlFor="exampleInputEmail1" className="form-label">Email address</label>
+                    <label htmlFor="exampleInputEmail1" className="form-label">Escribe Tu Dirección Email</label>
                     <input
                         type="email"
                         className="form-control"
@@ -49,10 +49,10 @@ export const Register = () => {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                     />
-                    <div id="emailHelp" className="form-text">We'll never share your email with anyone else.</div>
+                    <div id="emailHelp" className="form-text">Nunca compartiremos tus datos con alguien mas.</div>
                 </div>
                 <div className="mb-3">
-                    <label htmlFor="exampleInputPassword1" className="form-label">Password</label>
+                    <label htmlFor="exampleInputPassword1" className="form-label">Escribe Tu Contraseña</label>
                     <div className="input-group">
                         <input
                             type={showPassword ? "text" : "password"}
@@ -66,8 +66,10 @@ export const Register = () => {
                         </span>
                     </div>
                 </div>
-                <button type="submit" className="btn-a">Register</button>
-                <Link to="/" className="home">Come Back to Home</Link>
+                <button type="submit" className="btn btn-outline-secondary">Ingresar</button>
+                <div>
+                <Link to="/" className="link-warning">Volver Al Inicio</Link>
+                </div>
             </form>
             {message && <div className="mt-3 alert alert-info">{message}</div>}
         </div>
