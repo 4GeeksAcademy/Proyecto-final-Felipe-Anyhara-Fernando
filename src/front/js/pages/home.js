@@ -5,23 +5,26 @@ import "../../styles/home.css";
 export const Home = () => {
 	const navigate = useNavigate();
 	return (
-		<div className="container-fluid py-5 text-center">
+		<div className="container-nav-fluid">
+			<nav className="navbar navbar-expand-lg bg-dark">
+				<div className="container-fluid">
+					<span className="navbar-text fs-3 font-monospace">Smart Brain</span>
+					<div className="collapse navbar-collapse" id="navbarNavAltMarkup">
+						<div className="navbar-nav ms-auto">
+							<a className="nav-link link-warning fs-5 font-monospace" onClick={() => navigate("/login")}>EDUCADORES</a>
+							<a className="nav-link link-warning fs-5 font-monospace" onClick={() => navigate("/register")}>TUTORES</a>
+						</div>
+					</div>
+				</div>
+			</nav>
 			<div className="row">
-				<div className="col-12">
-					<h1>Bienvenido al sistema de registro de usuarios</h1>
-				</div>
+				
 			</div>
-			<div className="card">
-				<img src="https://i.pinimg.com/564x/f8/15/79/f81579b700e1f0272242f1d3aa62c52c.jpg" className="card-img-top" alt="..." />
-			</div>
-			<div className="row mt-5">
-				<div className="col-12 text-center">
-					<button type="button" onClick={() => navigate("/login")} className="btn btn-primary btn-lg me-5">Inicia sesión</button>
-					<button type="button" onClick={() => navigate("/register")} className="btn btn-success btn-lg">Regístrate</button>
-				</div>
+			<div className="col-12 text-center">
+				<button type="button" onClick={() => navigate("/login/private/profesor")} className="btn btn-primary btn-lg me-5">EDUCADORES</button>
+				<button type="button" onClick={() => navigate("/login/private/apoderado")} className="btn btn-success btn-lg">TUTORES</button>
 			</div>
 		</div>
 	);
 };
-
 
