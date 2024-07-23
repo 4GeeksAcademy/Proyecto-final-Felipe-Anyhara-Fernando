@@ -1,6 +1,6 @@
-
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import "../../styles/register.css";  // Asegúrate de importar el archivo de estilos
 
 export const Register = () => {
     const [email, setEmail] = useState("");
@@ -24,55 +24,56 @@ export const Register = () => {
 
         const data = await response.json();
         if (response.ok) {
-            setMessage("User registered successfully");
+            setMessage("Usuario registrado con éxito");
             console.log("User registered successfully", data);
             setTimeout(() => {
-                window.location.reload();  // Recargar la página después de 5 segundos
+                window.location.reload();  // Recargar la página después de 3 segundos
             }, 3000);
         } else {
-            setMessage(`Error registering user: ${data.error}`);
+            setMessage(`Error registrando usuario: ${data.error}`);
             console.log("Error registering user", data);
         }
     };
 
     return (
-        <div className="container-fluid py-3">
-            <h1>Registrata Tu Sesión</h1>
-            <form onSubmit={handleRegister}>
-                <div className="mb-3">
-                    <label htmlFor="exampleInputEmail1" className="form-label">Escribe Tu Dirección Email</label>
-                    <input
-                        type="email"
-                        className="form-control"
-                        id="exampleInputEmail1"
-                        aria-describedby="emailHelp"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                    />
-                    <div id="emailHelp" className="form-text">Nunca compartiremos tus datos con alguien mas.</div>
-                </div>
-                <div className="mb-3">
-                    <label htmlFor="exampleInputPassword1" className="form-label">Escribe Tu Contraseña</label>
-                    <div className="input-group">
+        <div className="contenedor-principal-form">
+            <div className="contenedor-form container py-5">
+                <h3 className="titulo-form mb-4">Registrarse</h3>
+                <form onSubmit={handleRegister}>
+                    <div className="mb-3">
+                        <label htmlFor="exampleInputEmail1" className="form-label">Email</label>
                         <input
-                            type={showPassword ? "text" : "password"}
+                            type="email"
                             className="form-control"
-                            id="exampleInputPassword1"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
+                            id="exampleInputEmail1"
+                            aria-describedby="emailHelp"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                         />
-                        <span className="input-group-text" onClick={() => setShowPassword(!showPassword)}>
-                            <i className={showPassword ? "fa-regular fa-eye-slash" : "fa-regular fa-eye"}></i>
-                        </span>
+                        <div id="emailHelp" className="form-text">Nunca compartiremos tus datos con alguien más.</div>
                     </div>
-                </div>
-                <button type="submit" className="btn btn-outline-secondary">Ingresar</button>
-                <div>
-                <Link to="/" className="link-warning">Volver Al Inicio</Link>
-                </div>
-            </form>
-            {message && <div className="mt-3 alert alert-info">{message}</div>}
+                    <div className="mb-3">
+                        <label htmlFor="exampleInputPassword1" className="form-label">Contraseña</label>
+                        <div className="input-group">
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                className="form-control"
+                                id="exampleInputPassword1"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                            />
+                            <span className="input-group-text" onClick={() => setShowPassword(!showPassword)}>
+                                <i className={showPassword ? "fa-regular fa-eye-slash" : "fa-regular fa-eye"}></i>
+                            </span>
+                        </div>
+                    </div>
+                    <button type="submit" className="btn btn-primary w-100">Registrar</button>
+                    <div className="text-center mt-3">
+                        <Link to="/" className="link-warning">Volver al inicio</Link>
+                    </div>
+                </form>
+                {message && <div className="mt-3 alert alert-info">{message}</div>}
+            </div>
         </div>
     );
 };
-

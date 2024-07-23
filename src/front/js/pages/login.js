@@ -1,6 +1,7 @@
 import React, { useState, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Context } from "../store/appContext";
+import "../../styles/login.css";  // Asegúrate de importar el archivo de estilos
 
 export const Login = () => {
     const [email, setEmail] = useState("");
@@ -20,11 +21,12 @@ export const Login = () => {
     };
 
     return (
-        <div className="container-fluid py-3">
-            <h3>Inicia La Sesión</h3>
+        <div className="contenedor-principal-form">
+            <div className="contenedor-form container py-5">
+            <h3 className="titulo-form mb-4">Iniciar Sesión</h3>
             <form onSubmit={handleLogin}>
                 <div className="mb-3">
-                    <label htmlFor="email" className="form-label">Escribe Tu Dirección Email</label>
+                    <label htmlFor="email" className="form-label">Email</label>
                     <input
                         type="email"
                         className="form-control"
@@ -34,7 +36,7 @@ export const Login = () => {
                     />
                 </div>
                 <div className="mb-3">
-                    <label htmlFor="password" className="form-label">Escribe Tu Contraseña</label>
+                    <label htmlFor="password" className="form-label">Contraseña</label>
                     <div className="input-group">
                         <input
                             type={showPassword ? "text" : "password"}
@@ -48,12 +50,15 @@ export const Login = () => {
                         </span>
                     </div>
                 </div>
-                <button type="button" className="btn btn-outline-secondary">Ingresar</button>
-                <div>
-                    <Link to="/" className="link-warning mt-5">Volver al inicio</Link>
+                <button type="submit" className="btn btn-primary w-100">Ingresar</button>
+                <div className="text-center mt-3">
+                    <Link to="/" className="link-warning">Volver al inicio</Link>
                 </div>
             </form>
         </div>
+        </div>
+        
     );
 };
+
 
