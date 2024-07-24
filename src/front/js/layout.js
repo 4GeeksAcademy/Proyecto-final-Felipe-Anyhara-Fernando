@@ -4,14 +4,11 @@ import ScrollToTop from "./component/scrollToTop";
 
 import { Home } from "./pages/home";
 import { Login } from "./pages/login";
-import { Register } from "./pages/register";
+import { RegisterTeacher } from "./pages/registerTeacher";  // Asegúrate de que estos componentes existan
+import { RegisterGuardian } from "./pages/registerGuardian";
 import { Private } from "./pages/private";
-import { Navbar } from "./component/navbar";
-import { Jumbotron } from "./component/jumbotron";
-import { Footer } from "./component/footer";
 import PrivateRoute from "./component/privateRoute";
-import { LoginProfesor } from "./pages/loginProfesor"; // Añade esta línea para importar LoginProfesor
-import { LoginApoderado } from "./pages/loginApoderado";
+
 
 import injectContext, { Context } from "./store/appContext";
 
@@ -21,7 +18,7 @@ const Layout = () => {
 
     useEffect(() => {
         actions.loadUserFromToken();
-    }, []);
+    }, [actions]);
 
     return (
         <div>
@@ -30,10 +27,11 @@ const Layout = () => {
                     <Routes>
                         <Route path="/" element={<Home />} />
                         <Route path="/login" element={<Login />} />
-                        <Route path="/register" element={<Register />} />
+                        <Route path="/register/teacher" element={<RegisterTeacher />} />
+                        <Route path="/register/guardian" element={<RegisterGuardian />} />
                         <Route path="/private" element={<PrivateRoute><Private /></PrivateRoute>} />
-                        <Route path="/login/profesor" element={<LoginProfesor />} /> {/* Ruta para LoginProfesor */}
-                        <Route path="/login/apoderado" element={<LoginApoderado />} />
+                        {/* <Route path="/login/profesor" element={<LoginProfesor />} />
+                        <Route path="/login/apoderado" element={<LoginApoderado />} /> */}
                         <Route path="*" element={<h1>Not found!</h1>} />
                     </Routes>
                 </ScrollToTop>
@@ -43,4 +41,3 @@ const Layout = () => {
 };
 
 export default injectContext(Layout);
-

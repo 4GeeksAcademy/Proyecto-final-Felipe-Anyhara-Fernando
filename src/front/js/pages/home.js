@@ -22,9 +22,13 @@ export const Home = () => {
                         <FontAwesomeIcon icon={faUser} className="me-2" />
                         Iniciar Sesión
                     </button>
-                    <button type="button" onClick={() => navigate("/register")} className="boton-registro btn">
+                    <button type="button" onClick={() => navigate("/register/teacher")} className="boton-registro btn">
                         <FontAwesomeIcon icon={faUserPlus} className="me-2" />
-                        Regístrate
+                        Regístrate como Profesor
+                    </button>
+                    <button type="button" onClick={() => navigate("/register/guardian")} className="boton-registro btn">
+                        <FontAwesomeIcon icon={faUserPlus} className="me-2" />
+                        Regístrate como Apoderado
                     </button>
                 </div>
             </div>
