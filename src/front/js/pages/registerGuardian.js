@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import "../../styles/register.css";  // Asegúrate de importar el archivo de estilos
 
-export const Register = () => {
+export const RegisterGuardian = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [message, setMessage] = useState("");
@@ -11,27 +11,31 @@ export const Register = () => {
     const handleRegister = async (event) => {
         event.preventDefault();
 
-        const response = await fetch('https://verbose-broccoli-pj7679g4qw5q397x7-3001.app.github.dev/api/register/teacher', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                email: email,
-                password: password
-            })
-        });
+        try {
+            const response = await fetch('https://verbose-broccoli-pj7679g4qw5q397x7-3001.app.github.dev/api/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email: email,
+                    password: password
+                })
+            });
 
-        const data = await response.json();
-        if (response.ok) {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
             setMessage("Usuario registrado con éxito");
             console.log("User registered successfully", data);
             setTimeout(() => {
                 window.location.reload();  // Recargar la página después de 3 segundos
             }, 3000);
-        } else {
-            setMessage(`Error registrando usuario: ${data.error}`);
-            console.log("Error registering user", data);
+        } catch (error) {
+            setMessage(`Error registrando usuario: ${error.message}`);
+            console.error("Error registering user", error);
         }
     };
 

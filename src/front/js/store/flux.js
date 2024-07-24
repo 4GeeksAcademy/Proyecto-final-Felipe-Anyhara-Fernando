@@ -40,7 +40,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             },
             login: async (email, password) => {
                 try {
-                    const resp = await fetch(process.env.BACKEND_URL + "/api/login", {
+                    const resp = await fetch(`${process.env.BACKEND_URL}/api/login`, {
                         method: "POST",
                         headers: {
                             "Content-type": "application/json"
@@ -59,13 +59,13 @@ const getState = ({ getStore, getActions, setStore }) => {
                     throw error;
                 }
             },
-            getPrivateData: async() =>{
+            getPrivateData: async() => {
                 try {
                     const token = sessionStorage.getItem("accessToken");
                     if (!token) {
-                        throw new Error("no hay un token de acceso con disponibilidad");
+                        throw new Error("no hay un token de acceso disponible");
                     }
-                    const resp = await fetch(process.env.BACKEND_URL + "/api/private", {
+                    const resp = await fetch(`${process.env.BACKEND_URL}/api/private`, {
                         method: "GET",
                         headers: {
                             Authorization: `Bearer ${token}`
@@ -73,16 +73,16 @@ const getState = ({ getStore, getActions, setStore }) => {
                     });
                     const data = await resp.json();
                     if (!resp.ok) {
-                        throw new Error(data.msg || "Error en la obtencion de datos");
+                        throw new Error(data.msg || "Error en la obtención de datos");
                     }
                     const { user } = getStore();
                     if (JSON.stringify(user) !== JSON.stringify(data)) {
                         setStore({ user: data });
-                        console.log("Los datos del usuario estan actualizados en el store:", data);
+                        console.log("Los datos del usuario están actualizados en el store:", data);
                     }
                     return data;
                 } catch (error) {
-                    console.error("Error en la obtencion de los datos:", error);
+                    console.error("Error en la obtención de los datos:", error);
                     throw error;
                 }
             },
@@ -90,7 +90,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                 const token = sessionStorage.getItem("accessToken");
                 if (!token) return false;
                 try {
-                    const response = await fetch(process.env.BACKEND_URL + "/api/user", {
+                    const response = await fetch(`${process.env.BACKEND_URL}/api/user`, {
                         method: "GET",
                         headers: {
                             "Authorization": `Bearer ${token}`
