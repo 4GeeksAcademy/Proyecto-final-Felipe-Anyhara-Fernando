@@ -14,12 +14,15 @@ export const RegisterTeacher = () => {
         try {
             const response = await fetch('https://ubiquitous-broccoli-wrvr9v7p7r462g7x6-3001.app.github.dev/api/register/teacher', {
                 method: 'POST',
+                mode: 'no-cors',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
                     email: email,
-                    password: password
+                    password: password,
+                    name: "test",
+                    lastName: "test"
                 })
             });
 

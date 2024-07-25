@@ -1,13 +1,13 @@
 from flask import Blueprint, request, jsonify
 from werkzeug.security import check_password_hash, generate_password_hash
-from api.models import Apoderado, Profesor, Alumno, AlumnoAsignatura, Recomendacion
-from flask_cors import CORS  # Importar CORS si es necesario
+from api.models import Apoderado, Profesor, Alumno, AlumnoAsignatura, Recomendacion, db
+from flask_cors import CORS 
 
 api = Blueprint('api', __name__)
 
 @api.route('/login', methods=['POST'])
 def login():
-    data = request.json
+    data = request.get_json()
     correo_electronico = data.get('correo_electronico')
     contrasena = data.get('contrasena')
 
@@ -21,9 +21,9 @@ def login():
 
     return jsonify({"mensaje": "Credenciales incorrectas"}), 401
 
-@api.route('/api/register/guardian', methods=['POST'])
+@api.route('/register/guardian', methods=['POST'])
 def register_guardian():
-    data = request.json
+    data = request.get_json()
     email = data.get('email')
     password = data.get('password')
     
@@ -33,13 +33,16 @@ def register_guardian():
     
     return jsonify({"message": "Apoderado registrado exitosamente"}), 201
 
-@api.route('/api/register/teacher', methods=['POST'])
+@api.route('/register/teacher', methods=['POST'])
 def register_teacher():
-    data = request.json
+    data = request.get_json()
     email = data.get('email')
     password = data.get('password')
     
-    new_teacher = Profesor(correo_electronico=email, contrasena=generate_password_hash(password), esta_activo=True)
+    nombre = data.get('name')
+    apellido = data.get('lastName')
+    
+    new_teacher = Profesor(nombre= nombre, apellido=apellido, correo_electronico=email, contrasena=generate_password_hash(password), esta_activo=True)
     db.session.add(new_teacher)
     db.session.commit()
     

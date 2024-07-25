@@ -4,7 +4,7 @@ import ScrollToTop from "./component/scrollToTop";
 
 import { Home } from "./pages/home";
 import { Login } from "./pages/login";
-import { RegisterTeacher } from "./pages/registerTeacher";  // Asegúrate de que estos componentes existan
+import { RegisterTeacher } from "./pages/registerTeacher"; 
 import { RegisterGuardian } from "./pages/registerGuardian";
 import { Private } from "./pages/private";
 import PrivateRoute from "./component/privateRoute";

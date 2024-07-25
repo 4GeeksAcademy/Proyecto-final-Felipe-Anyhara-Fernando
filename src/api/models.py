@@ -35,7 +35,7 @@ class Profesor(db.Model):
     nombre = db.Column(db.String(120), nullable=False)
     apellido = db.Column(db.String(120), nullable=False)
     correo_electronico = db.Column(db.String(120), unique=True, nullable=False)
-    contrasena = db.Column(db.String(80), nullable=False)
+    contrasena = db.Column(db.String(255), nullable=False)
     esta_activo = db.Column(db.Boolean, nullable=False, default=False)
     titulo = db.Column(db.String(120), nullable=True)
     especializacion = db.Column(db.String(120), nullable=True)
