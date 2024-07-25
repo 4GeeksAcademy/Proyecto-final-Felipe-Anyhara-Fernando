@@ -11,7 +11,7 @@ class Apoderado(db.Model):
     nombre = db.Column(db.String(120), nullable=False)
     apellido = db.Column(db.String(120), nullable=False)
     correo_electronico = db.Column(db.String(120), unique=True, nullable=False)
-    contrasena = db.Column(db.String(80), nullable=False)
+    contrasena = db.Column(db.String(255), nullable=False)
     esta_activo = db.Column(db.Boolean, nullable=False, default=False)
     telefono = db.Column(db.String(20), nullable=True)
     direccion = db.Column(db.Text, nullable=True)

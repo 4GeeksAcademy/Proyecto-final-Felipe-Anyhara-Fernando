@@ -26,11 +26,13 @@ def register_guardian():
     data = request.get_json()
     email = data.get('email')
     password = data.get('password')
-    
-    new_guardian = Apoderado(correo_electronico=email, contrasena=generate_password_hash(password), esta_activo=True)
+
+    nombre = data.get('name')
+    apellido = data.get ('lastName')
+    new_guardian = Apoderado(nombre= nombre, apellido=apellido, correo_electronico=email, contrasena=generate_password_hash(password), esta_activo=True)
     db.session.add(new_guardian)
     db.session.commit()
-    
+
     return jsonify({"message": "Apoderado registrado exitosamente"}), 201
 
 @api.route('/register/teacher', methods=['POST'])
