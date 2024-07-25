@@ -1,40 +1,49 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import "../../styles/register.css";  // Asegúrate de importar el archivo de estilos
+import { Link, useNavigate } from "react-router-dom";
+import "../../styles/register.css";
 
 export const RegisterTeacher = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [firstName, setFirstName] = useState("");
+    const [lastName, setLastName] = useState("");
     const [message, setMessage] = useState("");
     const [showPassword, setShowPassword] = useState(false);
+    const navigate = useNavigate();
 
     const handleRegister = async (event) => {
         event.preventDefault();
 
+        if (!email || !password || !firstName || !lastName) {
+            setMessage("Por favor, completa todos los campos.");
+            return;
+        }
+
         try {
             const response = await fetch('https://ubiquitous-broccoli-wrvr9v7p7r462g7x6-3001.app.github.dev/api/register/teacher', {
                 method: 'POST',
-                mode: 'no-cors',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
                     email: email,
                     password: password,
-                    name: "test",
-                    lastName: "test"
+                    name: firstName,
+                    lastName: lastName
                 })
             });
 
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                const errorMessage = `HTTP error! status: ${response.status}`;
+                setMessage(`Error registrando usuario: ${errorMessage}`);
+                throw new Error(errorMessage);
             }
 
             const data = await response.json();
             setMessage("Usuario registrado con éxito");
             console.log("User registered successfully", data);
             setTimeout(() => {
-                window.location.reload();  // Recargar la página después de 3 segundos
+                navigate('/login');  // Redirige a la página de inicio de sesión
             }, 3000);
         } catch (error) {
             setMessage(`Error registrando usuario: ${error.message}`);
@@ -47,6 +56,26 @@ export const RegisterTeacher = () => {
             <div className="contenedor-form container py-5">
                 <h3 className="titulo-form mb-4">Registrarse</h3>
                 <form onSubmit={handleRegister}>
+                    <div className="mb-3">
+                        <label htmlFor="firstName" className="form-label">Nombre</label>
+                        <input
+                            type="text"
+                            className="form-control"
+                            id="firstName"
+                            value={firstName}
+                            onChange={(e) => setFirstName(e.target.value)}
+                        />
+                    </div>
+                    <div className="mb-3">
+                        <label htmlFor="lastName" className="form-label">Apellido</label>
+                        <input
+                            type="text"
+                            className="form-control"
+                            id="lastName"
+                            value={lastName}
+                            onChange={(e) => setLastName(e.target.value)}
+                        />
+                    </div>
                     <div className="mb-3">
                         <label htmlFor="exampleInputEmail1" className="form-label">Email</label>
                         <input
