@@ -43,27 +43,36 @@ const getState = ({ getStore, getActions, setStore }) => {
                     const resp = await fetch(`${process.env.BACKEND_URL}/api/login`, {
                         method: "POST",
                         headers: {
-                            "Content-type": "application/json"
+                            "Content-Type": "application/json"
                         },
-                        body: JSON.stringify({ email, password })
+                        body: JSON.stringify({ correo_electronico: email, contrasena: password })
                     });
                     const data = await resp.json();
                     if (!resp.ok) {
-                        throw new Error(data.msg || "Error al iniciar sesión");
+                        throw new Error(data.mensaje || "Error al iniciar sesión");
                     }
-                    sessionStorage.setItem("accessToken", data.token);
-                    setStore({ user: data.user });
+                    // Guardar el token, el rol y el ID del usuario en localStorage
+                    sessionStorage.setItem("accessToken", data.access_token);
+                    localStorage.setItem("userRole", data.rol);
+                    localStorage.setItem("userId", data.id);
+                    // Redirigir según el rol del usuario
+                    if (data.rol === 'Profesor') {
+                        window.location.href = "/home-profesor";
+                    } else if (data.rol === 'Apoderado') {
+                        window.location.href = "/home-apoderado";
+                    }
+                    setStore({ user: data });
                     return data;
                 } catch (error) {
-                    console.log("Error Al Iniciar Sesion", error);
+                    console.log("Error al iniciar sesión", error);
                     throw error;
                 }
             },
-            getPrivateData: async() => {
+            getPrivateData: async () => {
                 try {
                     const token = sessionStorage.getItem("accessToken");
                     if (!token) {
-                        throw new Error("no hay un token de acceso disponible");
+                        throw new Error("No hay un token de acceso disponible");
                     }
                     const resp = await fetch(`${process.env.BACKEND_URL}/api/private`, {
                         method: "GET",
@@ -86,11 +95,28 @@ const getState = ({ getStore, getActions, setStore }) => {
                     throw error;
                 }
             },
+            //Debuggeo de esta acción. Prestar atención a comentarios y a los logs de la consola del navegador
             loadUserFromToken: async () => {
-                const token = sessionStorage.getItem("accessToken");
-                if (!token) return false;
+                const token = sessionStorage.getItem("accessToken"); //obtener el token desde el sessionStorage
+                const userId = localStorage.getItem("userId");  // Obtener el id desde el localStorage
+                const userRole = localStorage.getItem("userRole");  // Obtener el rol del usuario desde localStorage
+                if (!token || !userId || !userRole) {
+                    console.error("Token, userId, or userRole not found");
+                    setStore({ user: null });
+                    return;
+                }
                 try {
-                    const response = await fetch(`${process.env.BACKEND_URL}/api/user`, {
+                    // Construir la URL para la solicitud basada en el rol del usuario
+                    let apiUrl;
+                    if (userRole === 'Profesor') {
+                        apiUrl = `${process.env.BACKEND_URL}/api/teacher/${userId}`;
+                    } else if (userRole === 'Apoderado') {
+                        apiUrl = `${process.env.BACKEND_URL}/api/guardian/${userId}`;
+                    } else {
+                        throw new Error("Unknown user role");
+                    }
+                    // Obtener los datos del usuario
+                    const response = await fetch(apiUrl, {
                         method: "GET",
                         headers: {
                             "Authorization": `Bearer ${token}`
@@ -100,14 +126,83 @@ const getState = ({ getStore, getActions, setStore }) => {
                         throw new Error("Network response was not ok");
                     }
                     const data = await response.json();
-                    setStore({ user: data.user }); // Asegúrate de que data.user contenga el campo role
+                    setStore({ user: data }); // Actualizar el Store con la data del usuario
+                    // Console log del store después de actualizarlo
+                    console.log("User data updated in store:", data);
                 } catch (error) {
                     console.error("Error loading user from token:", error);
                     setStore({ user: null });
                 }
             },
+            // Acción para registrar un apoderado
+            registerGuardian: async (nombre, apellido, correo_electronico, contrasena, telefono, direccion) => {
+                const backendUrl = process.env.BACKEND_URL;
+                try {
+                    const response = await fetch(`${backendUrl}/api/register/guardian`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            nombre,
+                            apellido,
+                            correo_electronico,
+                            contrasena,
+                            telefono,
+                            direccion,
+                            rol: 'Apoderado' // Asigna el rol de 'Apoderado' por defecto
+                        })
+                    });
+                    if (!response.ok) {
+                        const errorMessage = `HTTP error! status: ${response.status}`;
+                        throw new Error(errorMessage);
+                    }
+                    const data = await response.json();
+                    console.log("User registered successfully", data);
+                    setStore({ message: "Usuario registrado con éxito" });
+                    return data;
+                } catch (error) {
+                    console.error("Error registering user", error);
+                    setStore({ message: `Error registrando usuario: ${error.message}` });
+                    throw error;
+                }
+            },
+            // Agregado: Acción para registrar un profesor
+            registerProfessor: async (nombre, apellido, correo_electronico, contrasena, titulo, especializacion) => {
+                const backendUrl = process.env.BACKEND_URL;
+                try {
+                    const response = await fetch(`${backendUrl}/api/register/teacher`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            nombre,
+                            apellido,
+                            correo_electronico,
+                            contrasena,
+                            titulo,
+                            especializacion,
+                            rol: 'Profesor' // Asigna el rol de 'Profesor' por defecto
+                        })
+                    });
+                    if (!response.ok) {
+                        const errorMessage = `HTTP error! status: ${response.status}`;
+                        throw new Error(errorMessage);
+                    }
+                    const data = await response.json();
+                    console.log("Professor registered successfully", data);
+                    setStore({ message: "Profesor registrado con éxito" });
+                    return data;
+                } catch (error) {
+                    console.error("Error registering professor", error);
+                    setStore({ message: `Error registrando profesor: ${error.message}` });
+                    throw error;
+                }
+            },
             logout: () => {
                 sessionStorage.removeItem("accessToken");
+                localStorage.removeItem("userRole");
                 setStore({ user: null });
             }
         }

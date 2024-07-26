@@ -11,11 +11,13 @@ class Apoderado(db.Model):
     nombre = db.Column(db.String(120), nullable=False)
     apellido = db.Column(db.String(120), nullable=False)
     correo_electronico = db.Column(db.String(120), unique=True, nullable=False)
-    contrasena = db.Column(db.String(255), nullable=False)
+    contrasena = db.Column(db.String(255), nullable=False) #cambiar longitud para que pueda guardar el hash
     esta_activo = db.Column(db.Boolean, nullable=False, default=False)
     telefono = db.Column(db.String(20), nullable=True)
     direccion = db.Column(db.Text, nullable=True)
     alumnos = relationship('Alumno', backref='apoderado', lazy=True)
+    rol = db.Column(db.String(120), nullable=False)
+
 
     def serialize(self):
         return {
@@ -26,6 +28,7 @@ class Apoderado(db.Model):
             "esta_activo": self.esta_activo,
             "telefono": self.telefono,
             "direccion": self.direccion,
+            "rol": self.rol,
             "alumnos": [alumno.serialize() for alumno in self.alumnos]
         }
 
@@ -40,6 +43,7 @@ class Profesor(db.Model):
     titulo = db.Column(db.String(120), nullable=True)
     especializacion = db.Column(db.String(120), nullable=True)
     asignaturas = relationship('Asignatura', backref='profesor', lazy=True)
+    rol = db.Column(db.String(120), nullable=False)
 
     def serialize(self):
         return {
@@ -50,6 +54,7 @@ class Profesor(db.Model):
             "esta_activo": self.esta_activo,
             "titulo": self.titulo,
             "especializacion": self.especializacion,
+            "rol": self.rol,
             "asignaturas": [asignatura.serialize() for asignatura in self.asignaturas]
         }
 

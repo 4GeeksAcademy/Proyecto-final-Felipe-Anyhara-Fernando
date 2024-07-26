@@ -1,25 +1,20 @@
 import React, { useEffect, useContext } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import ScrollToTop from "./component/scrollToTop";
-
 import { Home } from "./pages/home";
 import { Login } from "./pages/login";
 import { RegisterTeacher } from "./pages/registerTeacher"; 
 import { RegisterGuardian } from "./pages/registerGuardian";
-import { Private } from "./pages/private";
-import PrivateRoute from "./component/privateRoute";
-
-
-import injectContext, { Context } from "./store/appContext";
-
+import { HomeProfesor } from "./pages/homeProfesor"; //importamos el componente de la vista del profesor
+import { HomeApoderado } from "./pages/homeApoderado"; //importamos el componente de la vista del apoderado
+import injectContext, { Context } from "./store/appContext"; 
 const Layout = () => {
     const { actions } = useContext(Context);
     const basename = process.env.BASENAME || "";
-
     useEffect(() => {
         actions.loadUserFromToken();
-    }, [actions]);
-
+    }, []); // Dependencia vacía asegura que esto se ejecute solo una vez, estaba generando loop
+    
     return (
         <div>
             <BrowserRouter basename={basename}>
@@ -27,17 +22,14 @@ const Layout = () => {
                     <Routes>
                         <Route path="/" element={<Home />} />
                         <Route path="/login" element={<Login />} />
+                        <Route path="/home-apoderado" element={<HomeApoderado />} /> 
+                        <Route path="/home-profesor" element={<HomeProfesor />} />
                         <Route path="/register/teacher" element={<RegisterTeacher />} />
                         <Route path="/register/guardian" element={<RegisterGuardian />} />
-                        <Route path="/private" element={<PrivateRoute><Private /></PrivateRoute>} />
-                        {/* <Route path="/login/profesor" element={<LoginProfesor />} />
-                        <Route path="/login/apoderado" element={<LoginApoderado />} /> */}
-                        <Route path="*" element={<h1>Not found!</h1>} />
                     </Routes>
                 </ScrollToTop>
             </BrowserRouter>
         </div>
     );
 };
-
 export default injectContext(Layout);
