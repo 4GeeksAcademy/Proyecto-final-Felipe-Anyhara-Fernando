@@ -1,11 +1,12 @@
 import React, { useState, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Context } from "../store/appContext";
-import "../../styles/login.css";  // Asegúrate de importar el archivo de estilos
+import "../../styles/login.css";
 
 export const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [error, setError] = useState("");  // Estado para almacenar mensajes de error
     const { store, actions } = useContext(Context);
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
@@ -22,6 +23,7 @@ export const Login = () => {
                 navigate("/private");
             }
         } catch (error) {
+            setError("Credenciales incorrectas. Inténtalo de nuevo.");  // Mensaje de error
             console.error("Login failed:", error);
         }
     };
@@ -39,6 +41,7 @@ export const Login = () => {
                             id="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
+                            required
                         />
                     </div>
                     <div className="mb-3">
@@ -50,6 +53,7 @@ export const Login = () => {
                                 id="password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
+                                required
                             />
                             <span className="input-group-text" onClick={() => setShowPassword(!showPassword)}>
                                 <i className={showPassword ? "fa-solid fa-eye-slash" : "fa-solid fa-eye"}></i>
@@ -57,6 +61,7 @@ export const Login = () => {
                         </div>
                     </div>
                     <button type="submit" className="btn btn-primary w-100">Ingresar</button>
+                    {error && <div className="mt-3 alert alert-danger">{error}</div>}  {/* Mostrar mensaje de error */}
                     <div className="text-center mt-3">
                         <Link to="/" className="link-warning">Volver al inicio</Link>
                     </div>
