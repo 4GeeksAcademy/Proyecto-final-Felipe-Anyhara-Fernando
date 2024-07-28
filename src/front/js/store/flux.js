@@ -4,17 +4,13 @@ const getState = ({ getStore, getActions, setStore }) => {
             user: null,
             message: null,
             demo: [
-                {
-                    title: "FIRST",
-                    background: "white",
-                    initial: "white"
-                },
-                {
-                    title: "SECOND",
-                    background: "white",
-                    initial: "white"
-                }
-            ]
+                { title: "FIRST", background: "white", initial: "white" },
+                { title: "SECOND", background: "white", initial: "white" }
+            ],
+            asignaturas: [],
+            calificaciones: [],
+            apoderados: [],
+            alumnos: []
         },
         actions: {
             exampleFunction: () => {
@@ -22,7 +18,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             },
             getMessage: async () => {
                 try {
-                    const resp = await fetch(process.env.BACKEND_URL + "/api/hello");
+                    const resp = await fetch(`${process.env.BACKEND_URL}/api/hello`);
                     const data = await resp.json();
                     setStore({ message: data.message });
                     return data;
@@ -42,25 +38,22 @@ const getState = ({ getStore, getActions, setStore }) => {
                 try {
                     const resp = await fetch(`${process.env.BACKEND_URL}/api/login`, {
                         method: "POST",
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
+                        headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ correo_electronico: email, contrasena: password })
                     });
                     const data = await resp.json();
-                    if (!resp.ok) {
-                        throw new Error(data.mensaje || "Error al iniciar sesión");
-                    }
-                    // Guardar el token, el rol y el ID del usuario en localStorage
+                    if (!resp.ok) throw new Error(data.mensaje || "Error al iniciar sesión");
+
                     sessionStorage.setItem("accessToken", data.access_token);
                     localStorage.setItem("userRole", data.rol);
                     localStorage.setItem("userId", data.id);
-                    // Redirigir según el rol del usuario
+
                     if (data.rol === 'Profesor') {
                         window.location.href = "/home-profesor";
                     } else if (data.rol === 'Apoderado') {
                         window.location.href = "/home-apoderado";
                     }
+
                     setStore({ user: data });
                     return data;
                 } catch (error) {
@@ -71,19 +64,15 @@ const getState = ({ getStore, getActions, setStore }) => {
             getPrivateData: async () => {
                 try {
                     const token = sessionStorage.getItem("accessToken");
-                    if (!token) {
-                        throw new Error("No hay un token de acceso disponible");
-                    }
+                    if (!token) throw new Error("No hay un token de acceso disponible");
+
                     const resp = await fetch(`${process.env.BACKEND_URL}/api/private`, {
                         method: "GET",
-                        headers: {
-                            Authorization: `Bearer ${token}`
-                        }
+                        headers: { Authorization: `Bearer ${token}` }
                     });
                     const data = await resp.json();
-                    if (!resp.ok) {
-                        throw new Error(data.msg || "Error en la obtención de datos");
-                    }
+                    if (!resp.ok) throw new Error(data.msg || "Error en la obtención de datos");
+
                     const { user } = getStore();
                     if (JSON.stringify(user) !== JSON.stringify(data)) {
                         setStore({ user: data });
@@ -95,18 +84,16 @@ const getState = ({ getStore, getActions, setStore }) => {
                     throw error;
                 }
             },
-            //Debuggeo de esta acción. Prestar atención a comentarios y a los logs de la consola del navegador
             loadUserFromToken: async () => {
-                const token = sessionStorage.getItem("accessToken"); //obtener el token desde el sessionStorage
-                const userId = localStorage.getItem("userId");  // Obtener el id desde el localStorage
-                const userRole = localStorage.getItem("userRole");  // Obtener el rol del usuario desde localStorage
+                const token = sessionStorage.getItem("accessToken");
+                const userId = localStorage.getItem("userId");
+                const userRole = localStorage.getItem("userRole");
                 if (!token || !userId || !userRole) {
                     console.error("Token, userId, or userRole not found");
                     setStore({ user: null });
                     return;
                 }
                 try {
-                    // Construir la URL para la solicitud basada en el rol del usuario
                     let apiUrl;
                     if (userRole === 'Profesor') {
                         apiUrl = `${process.env.BACKEND_URL}/api/teacher/${userId}`;
@@ -115,34 +102,27 @@ const getState = ({ getStore, getActions, setStore }) => {
                     } else {
                         throw new Error("Unknown user role");
                     }
-                    // Obtener los datos del usuario
+
                     const response = await fetch(apiUrl, {
                         method: "GET",
-                        headers: {
-                            "Authorization": `Bearer ${token}`
-                        }
+                        headers: { "Authorization": `Bearer ${token}` }
                     });
-                    if (!response.ok) {
-                        throw new Error("Network response was not ok");
-                    }
+                    if (!response.ok) throw new Error("Network response was not ok");
+
                     const data = await response.json();
-                    setStore({ user: data }); // Actualizar el Store con la data del usuario
-                    // Console log del store después de actualizarlo
+                    setStore({ user: data });
                     console.log("User data updated in store:", data);
                 } catch (error) {
                     console.error("Error loading user from token:", error);
                     setStore({ user: null });
                 }
             },
-            // Acción para registrar un apoderado
             registerGuardian: async (nombre, apellido, correo_electronico, contrasena, telefono, direccion) => {
                 const backendUrl = process.env.BACKEND_URL;
                 try {
                     const response = await fetch(`${backendUrl}/api/register/guardian`, {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
+                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
                             nombre,
                             apellido,
@@ -150,13 +130,14 @@ const getState = ({ getStore, getActions, setStore }) => {
                             contrasena,
                             telefono,
                             direccion,
-                            rol: 'Apoderado' // Asigna el rol de 'Apoderado' por defecto
+                            rol: 'Apoderado'
                         })
                     });
                     if (!response.ok) {
-                        const errorMessage = `HTTP error! status: ${response.status}`;
-                        throw new Error(errorMessage);
+                        const errorData = await response.json();
+                        throw new Error(errorData.mensaje || `HTTP error! status: ${response.status}`);
                     }
+
                     const data = await response.json();
                     console.log("User registered successfully", data);
                     setStore({ message: "Usuario registrado con éxito" });
@@ -167,15 +148,12 @@ const getState = ({ getStore, getActions, setStore }) => {
                     throw error;
                 }
             },
-            // Agregado: Acción para registrar un profesor
             registerProfessor: async (nombre, apellido, correo_electronico, contrasena, titulo, especializacion) => {
                 const backendUrl = process.env.BACKEND_URL;
                 try {
                     const response = await fetch(`${backendUrl}/api/register/teacher`, {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
+                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
                             nombre,
                             apellido,
@@ -183,13 +161,14 @@ const getState = ({ getStore, getActions, setStore }) => {
                             contrasena,
                             titulo,
                             especializacion,
-                            rol: 'Profesor' // Asigna el rol de 'Profesor' por defecto
+                            rol: 'Profesor'
                         })
                     });
                     if (!response.ok) {
-                        const errorMessage = `HTTP error! status: ${response.status}`;
-                        throw new Error(errorMessage);
+                        const errorData = await response.json();
+                        throw new Error(errorData.mensaje || `HTTP error! status: ${response.status}`);
                     }
+
                     const data = await response.json();
                     console.log("Professor registered successfully", data);
                     setStore({ message: "Profesor registrado con éxito" });
@@ -203,9 +182,203 @@ const getState = ({ getStore, getActions, setStore }) => {
             logout: () => {
                 sessionStorage.removeItem("accessToken");
                 localStorage.removeItem("userRole");
+                localStorage.removeItem("userId");
                 setStore({ user: null });
+            },
+            addAsignatura: async (profesorId, nombreAsignatura) => {
+                const backendUrl = process.env.BACKEND_URL;
+                if (!profesorId || !nombreAsignatura) {
+                    console.error("Profesor ID or Nombre de Asignatura is missing");
+                    return;
+                }
+                try {
+                    const response = await fetch(`${backendUrl}/api/asignaturas`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            id_profesor: profesorId,
+                            nombre: nombreAsignatura
+                        })
+                    });
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.mensaje || `HTTP error! status: ${response.status}`);
+                    }
+            
+                    const data = await response.json();
+                    const store = getStore();
+                    setStore({ asignaturas: [...store.asignaturas, data] });
+                    console.log("Asignatura added successfully", data);
+                    return data;
+                } catch (error) {
+                    console.error("Error adding asignatura", error);
+                    throw error;
+                }
+            },
+            addCalificacion: async (idAlumno, idAsignatura, calificacion) => {
+                const backendUrl = process.env.BACKEND_URL;
+                if (!idAlumno || !idAsignatura || calificacion === undefined) {
+                    console.error("ID de alumno, ID de asignatura y calificación son requeridos");
+                    return;
+                }
+                try {
+                    const response = await fetch(`${backendUrl}/api/alumno_asignaturas`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            id_alumno: idAlumno,
+                            id_asignatura: idAsignatura,
+                            calificacion: calificacion
+                        })
+                    });
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.mensaje || `HTTP error! status: ${response.status}`);
+                    }
+            
+                    const data = await response.json();
+                    const store = getStore();
+                    setStore({ calificaciones: [...store.calificaciones, data] });
+                    console.log("Calificación añadida con éxito", data);
+                    return data;
+                } catch (error) {
+                    console.error("Error añadiendo calificación", error);
+                    throw error;
+                }
+            },
+            getProfesores: async () => {
+                const backendUrl = process.env.BACKEND_URL;
+                try {
+                    const response = await fetch(`${backendUrl}/api/teachers`, {
+                        method: 'GET',
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.mensaje || `HTTP error! status: ${response.status}`);
+                    }
+            
+                    const data = await response.json();
+                    return data;
+                } catch (error) {
+                    console.error("Error fetching profesores", error);
+                    throw error;
+                }
+            },
+            getApoderados: async () => {
+                const backendUrl = process.env.BACKEND_URL;
+                try {
+                    const response = await fetch(`${backendUrl}/api/guardians`, {
+                        method: 'GET',
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.mensaje || `HTTP error! status: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    setStore({ apoderados: data });
+                    return data;
+                } catch (error) {
+                    console.error("Error fetching apoderados", error);
+                    throw error;
+                }
+            },
+            getAsignaturas: async () => {
+                const backendUrl = process.env.BACKEND_URL;
+                try {
+                    const response = await fetch(`${backendUrl}/api/asignaturas`, {
+                        method: 'GET',
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.mensaje || `HTTP error! status: ${response.status}`);
+                    }
+            
+                    const data = await response.json();
+                    setStore({ asignaturas: data });
+                    return data;
+                } catch (error) {
+                    console.error("Error fetching asignaturas", error);
+                    throw error;
+                }
+            },
+            getCalificaciones: async (idAlumno) => {
+                const backendUrl = process.env.BACKEND_URL;
+                try {
+                    const response = await fetch(`${backendUrl}/api/calificaciones/${idAlumno}`, {
+                        method: 'GET',
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.mensaje || `HTTP error! status: ${response.status}`);
+                    }
+            
+                    const data = await response.json();
+                    setStore({ calificaciones: data });
+                    return data;
+                } catch (error) {
+                    console.error("Error fetching calificaciones", error);
+                    throw error;
+                }
+            },
+            registerAlumno: async (nombre, apellido, idApoderado, estaActivo = false) => {
+                const backendUrl = process.env.BACKEND_URL;
+                if (!nombre || !apellido || !idApoderado) {
+                    console.error("Nombre, apellido e ID del apoderado son requeridos");
+                    return;
+                }
+                try {
+                    const response = await fetch(`${backendUrl}/api/alumnos`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            nombre,
+                            apellido,
+                            id_apoderado: idApoderado,
+                            esta_activo: estaActivo
+                        })
+                    });
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.mensaje || `HTTP error! status: ${response.status}`);
+                    }
+            
+                    const data = await response.json();
+                    const store = getStore();
+                    setStore({ alumnos: [...store.alumnos, data] });
+                    console.log("Alumno registrado con éxito", data);
+                    return data;
+                } catch (error) {
+                    console.error("Error registrando alumno", error);
+                    throw error;
+                }
+            },
+            getAlumnos: async () => {
+                const backendUrl = process.env.BACKEND_URL;
+                try {
+                    const response = await fetch(`${backendUrl}/api/alumnos`, {
+                        method: 'GET',
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.mensaje || `HTTP error! status: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    setStore({ alumnos: data });
+                    return data;
+                } catch (error) {
+                    console.error("Error fetching alumnos", error);
+                    throw error;
+                }
             }
         }
     };
 };
+
 export default getState;

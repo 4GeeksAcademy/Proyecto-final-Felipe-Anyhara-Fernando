@@ -11,7 +11,7 @@ class Apoderado(db.Model):
     nombre = db.Column(db.String(120), nullable=False)
     apellido = db.Column(db.String(120), nullable=False)
     correo_electronico = db.Column(db.String(120), unique=True, nullable=False)
-    contrasena = db.Column(db.String(255), nullable=False) #cambiar longitud para que pueda guardar el hash
+    contrasena = db.Column(db.String(255), nullable=False) 
     esta_activo = db.Column(db.Boolean, nullable=False, default=False)
     telefono = db.Column(db.String(20), nullable=True)
     direccion = db.Column(db.Text, nullable=True)
@@ -69,8 +69,6 @@ class Asignatura(db.Model):
         return {
             "id": self.id,
             "nombre": self.nombre,
-            "profesor": self.profesor.serialize() if self.profesor else None,
-            "calificaciones": [calificacion.serialize() for calificacion in self.calificaciones]
         }
         
 class Alumno(db.Model):
@@ -89,9 +87,6 @@ class Alumno(db.Model):
             "nombre": self.nombre,
             "apellido": self.apellido,
             "esta_activo": self.esta_activo,
-            "apoderado": self.apoderado.serialize() if self.apoderado else None,
-            "asignaturas": [asignatura.serialize() for asignatura in self.asignaturas],
-            "recomendaciones": [recomendacion.serialize() for recomendacion in self.recomendaciones]
         }
 
 class AlumnoAsignatura(db.Model):
@@ -104,8 +99,6 @@ class AlumnoAsignatura(db.Model):
     def serialize(self):
         return {
             "id": self.id,
-            "alumno": self.alumno.serialize() if self.alumno else None,
-            "asignatura": self.asignatura.serialize() if self.asignatura else None,
             "calificacion": self.calificacion
         }
 
