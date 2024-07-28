@@ -13,5 +13,3 @@ if (rootElement) {
 } else {
     console.error("No se encontró un elemento con el ID 'app'.");
 }
-
-

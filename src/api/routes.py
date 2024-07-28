@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from werkzeug.security import check_password_hash, generate_password_hash
-from api.models import Apoderado, Profesor, Alumno, AlumnoAsignatura, Recomendacion, db
+from api.models import Apoderado, Profesor, Asignatura, Alumno, AlumnoAsignatura, Recomendacion, db
 from flask_cors import CORS 
 
 api = Blueprint('api', __name__)
@@ -174,3 +174,130 @@ def get_guardians():
 def get_guardian(id):
     apoderado = Apoderado.query.get_or_404(id)
     return jsonify(apoderado.serialize()), 200
+
+@api.route('/asignaturas', methods=['POST'])
+def agregar_asignatura():
+    data = request.get_json()
+    nombre = data.get('nombre')
+    id_profesor = data.get('id_profesor')
+
+    if not nombre or not id_profesor:
+        return jsonify({'error': 'Nombre y ID del profesor son requeridos'}), 400
+
+    profesor = Profesor.query.get(id_profesor)
+    if not profesor:
+        return jsonify({'error': 'Profesor no encontrado'}), 404
+
+    nueva_asignatura = Asignatura(nombre=nombre, id_profesor=id_profesor)
+    db.session.add(nueva_asignatura)
+    db.session.commit()
+
+    return jsonify(nueva_asignatura.serialize()), 201
+
+@api.route('/asignaturas', methods=['GET'])
+def obtener_asignaturas():
+    asignaturas = Asignatura.query.all()
+    return jsonify([asignatura.serialize() for asignatura in asignaturas]), 200
+
+@api.route('/asignaturas/<int:id>', methods=['DELETE'])
+def eliminar_asignatura(id):
+    asignatura = Asignatura.query.get(id)
+    if not asignatura:
+        return jsonify({'error': 'Asignatura no encontrada'}), 404
+
+    db.session.delete(asignatura)
+    db.session.commit()
+    
+    return jsonify({'message': 'Asignatura eliminada exitosamente'}), 200
+
+@api.route('/alumnos', methods=['POST'])
+def agregar_alumno():
+    data = request.get_json()
+
+    # Validar datos requeridos
+    nombre = data.get('nombre')
+    apellido = data.get('apellido')
+    id_apoderado = data.get('id_apoderado')
+    esta_activo = data.get('esta_activo', False)
+
+    if not nombre or not apellido or not id_apoderado:
+        return jsonify({'error': 'Nombre, apellido e ID del apoderado son requeridos'}), 400
+
+    # Verificar que el apoderado existe
+    apoderado = Apoderado.query.get(id_apoderado)
+    if not apoderado:
+        return jsonify({'error': 'Apoderado no encontrado'}), 404
+
+    # Crear nuevo alumno
+    nuevo_alumno = Alumno(
+        nombre=nombre,
+        apellido=apellido,
+        id_apoderado=id_apoderado,
+        esta_activo=esta_activo
+    )
+
+    db.session.add(nuevo_alumno)
+    db.session.commit()
+
+    return jsonify(nuevo_alumno.serialize()), 201
+
+@api.route('/alumnos', methods=['GET'])
+def obtener_alumnos():
+    alumnos = Alumno.query.all()
+    return jsonify([alumno.serialize() for alumno in alumnos]), 200
+
+@api.route('/alumno_asignaturas', methods=['POST'])
+def agregar_alumno_asignatura():
+    data = request.get_json()
+
+    # Validar datos requeridos
+    id_alumno = data.get('id_alumno')
+    id_asignatura = data.get('id_asignatura')
+    calificacion = data.get('calificacion')
+
+    if not id_alumno or not id_asignatura or calificacion is None:
+        return jsonify({'error': 'ID de alumno, ID de asignatura y calificación son requeridos'}), 400
+
+    # Verificar que el alumno existe
+    alumno = Alumno.query.get(id_alumno)
+    if not alumno:
+        return jsonify({'error': 'Alumno no encontrado'}), 404
+
+    # Verificar que la asignatura existe
+    asignatura = Asignatura.query.get(id_asignatura)
+    if not asignatura:
+        return jsonify({'error': 'Asignatura no encontrada'}), 404
+
+    # Crear nuevo registro de alumno_asignatura
+    nuevo_registro = AlumnoAsignatura(
+        id_alumno=id_alumno,
+        id_asignatura=id_asignatura,
+        calificacion=calificacion
+    )
+
+    db.session.add(nuevo_registro)
+    db.session.commit()
+
+    return jsonify(nuevo_registro.serialize()), 201
+
+@api.route('/alumno_asignaturas', methods=['GET'])
+def obtener_alumno_asignaturas():
+    registros = (
+        db.session.query(AlumnoAsignatura, Alumno, Asignatura)
+        .join(Alumno, AlumnoAsignatura.id_alumno == Alumno.id)
+        .join(Asignatura, AlumnoAsignatura.id_asignatura == Asignatura.id)
+        .all()
+    )
+    
+    result = []
+    for registro, alumno, asignatura in registros:
+        result.append({
+            "id": registro.id,
+            "id_alumno": registro.id_alumno,
+            "nombre_alumno": alumno.nombre,
+            "id_asignatura": registro.id_asignatura,
+            "nombre_asignatura": asignatura.nombre,
+            "calificacion": registro.calificacion
+        })
+    
+    return jsonify(result), 200
