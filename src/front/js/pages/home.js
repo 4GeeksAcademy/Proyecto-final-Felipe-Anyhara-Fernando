@@ -3,8 +3,10 @@ import { useNavigate } from "react-router-dom";
 import "../../styles/home.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faUserPlus } from "@fortawesome/free-solid-svg-icons";
+
 export const Home = () => {
     const navigate = useNavigate();
+
     return (
         <div className="container-fluid">
             <nav className="barra-navegacion navbar navbar-expand-lg bg-dark">

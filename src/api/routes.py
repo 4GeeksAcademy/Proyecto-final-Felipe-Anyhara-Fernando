@@ -268,7 +268,6 @@ def agregar_alumno_asignatura():
     if not asignatura:
         return jsonify({'error': 'Asignatura no encontrada'}), 404
 
-    # Crear nuevo registro de alumno_asignatura
     nuevo_registro = AlumnoAsignatura(
         id_alumno=id_alumno,
         id_asignatura=id_asignatura,
@@ -301,3 +300,45 @@ def obtener_alumno_asignaturas():
         })
     
     return jsonify(result), 200
+
+
+@api.route('/alumnos-detalles', methods=['GET'])
+def get_alumnos_con_detalles():
+    try:
+        apoderado_id = request.args.get('apoderado_id')
+        if not apoderado_id:
+            print("Apoderado ID es requerido")
+            return jsonify({"mensaje": "Apoderado ID es requerido"}), 400
+
+        alumnos = Alumno.query.filter_by(id_apoderado=apoderado_id).all()
+        registros_asignatura = (
+            db.session.query(AlumnoAsignatura, Alumno, Asignatura)
+            .join(Alumno, AlumnoAsignatura.id_alumno == Alumno.id)
+            .join(Asignatura, AlumnoAsignatura.id_asignatura == Asignatura.id)
+            .filter(Alumno.id_apoderado == apoderado_id)
+            .all()
+        )
+        
+        alumnos_detalle = []
+        for alumno in alumnos:
+            alumno_info = {
+                "id": alumno.id,
+                "nombre": alumno.nombre,
+                "apellido": alumno.apellido,
+                "asignaturas": []
+            }
+            for registro, _, asignatura in registros_asignatura:
+                if registro.id_alumno == alumno.id:
+                    alumno_info["asignaturas"].append({
+                        "id_asignatura": registro.id_asignatura,
+                        "nombre_asignatura": asignatura.nombre,
+                        "calificacion": registro.calificacion
+                    })
+            alumnos_detalle.append(alumno_info)
+        
+        print("Datos de alumnos con detalles: %s", alumnos_detalle)
+        return jsonify(alumnos_detalle), 200
+
+    except Exception as e:
+        print("Error en la función get_alumnos_con_detalles: %s", str(e))
+        return jsonify({"Error desde el backend": str(e)}), 500
