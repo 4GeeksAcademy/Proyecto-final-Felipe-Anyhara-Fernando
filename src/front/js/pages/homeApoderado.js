@@ -3,6 +3,8 @@ import { Context } from '../store/appContext'; // Verifica esta ruta
 import { Calificaciones } from "./calificaciones"; // Importa el componente
 import { Recomendaciones } from "./recomendaciones";
 import { useNavigate } from 'react-router-dom';
+
+
 export const HomeApoderado = () => {
     const { actions, store } = useContext(Context); // Obtén actions y store del contexto
     const [activeTab, setActiveTab] = useState('calificaciones');
@@ -71,7 +73,7 @@ export const HomeApoderado = () => {
                             </li>
                         </ul>
                         <div className="d-flex justify-content-end">
-                        <button className="btn btn-outline-success" onClick={logout} type="button">Logout</button>
+                        <button className="btn btn-outline-success" onClick={logout} type="button">Cerrar Sesión</button>
                         </div>
                     </div>
                 </div>

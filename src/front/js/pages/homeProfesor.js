@@ -1,5 +1,7 @@
 import React, { useState, useContext, useEffect } from "react";
 import { Context } from "../store/appContext";
+import { useNavigate } from 'react-router-dom';
+
 
 export const HomeProfesor = () => {
     const { store, actions } = useContext(Context);
@@ -18,6 +20,8 @@ export const HomeProfesor = () => {
     const [idApoderado, setIdApoderado] = useState("");
     const [estaActivo, setEstaActivo] = useState(false);
     const [activeTab, setActiveTab] = useState("home");
+    const navigate = useNavigate();
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -33,7 +37,7 @@ export const HomeProfesor = () => {
     }, [actions]);
 
     useEffect(() => {
-        if (!sessionStorage.getItem("accessToken")){
+        if (!sessionStorage.getItem("accessToken")) {
             navigate("/")
         }
     }, []);
@@ -228,9 +232,13 @@ export const HomeProfesor = () => {
                                 <a className={`nav-link ${activeTab === "apoderados" ? "active" : ""}`} href="#" onClick={() => setActiveTab("apoderados")}>Apoderados</a>
                             </li>
                         </ul>
+                        <div className="d-flex justify-content-end">
+                            <button className="btn btn-outline-danger" onClick={logout} type="button">Cerrar Sesión</button>
+                        </div>
                     </div>
                 </div>
             </nav>
+
             <div className="container mt-4">
                 <div className="border border-secondary rounded p-4 bg-light">
                     {renderContent()}
@@ -238,12 +246,12 @@ export const HomeProfesor = () => {
                         <div className="col-md-6">
                             <h2>Agregar Asignatura</h2>
                             <div className="mb-3">
-                                <input 
-                                    type="text" 
-                                    className="form-control" 
-                                    placeholder="Nombre de la asignatura" 
-                                    value={asignatura} 
-                                    onChange={(e) => setAsignatura(e.target.value)} 
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="Nombre de la asignatura"
+                                    value={asignatura}
+                                    onChange={(e) => setAsignatura(e.target.value)}
                                 />
                             </div>
                             <button className="btn btn-primary" onClick={handleAddAsignatura}>Agregar</button>
@@ -279,12 +287,12 @@ export const HomeProfesor = () => {
                                 </select>
                             </div>
                             <div className="mb-3">
-                                <input 
-                                    type="text" 
-                                    className="form-control" 
-                                    placeholder="Calificación" 
-                                    value={calificacion} 
-                                    onChange={(e) => setCalificacion(e.target.value)} 
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="Calificación"
+                                    value={calificacion}
+                                    onChange={(e) => setCalificacion(e.target.value)}
                                 />
                             </div>
                             <button className="btn btn-primary" onClick={handleAddCalificacion}>Agregar</button>
@@ -292,57 +300,57 @@ export const HomeProfesor = () => {
                         <div className="col-md-6">
                             <h2>Agregar Apoderado</h2>
                             <div className="mb-3">
-                                <input 
-                                    type="text" 
-                                    className="form-control" 
-                                    placeholder="Nombre" 
-                                    value={nombreApoderado} 
-                                    onChange={(e) => setNombreApoderado(e.target.value)} 
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="Nombre"
+                                    value={nombreApoderado}
+                                    onChange={(e) => setNombreApoderado(e.target.value)}
                                 />
                             </div>
                             <div className="mb-3">
-                                <input 
-                                    type="text" 
-                                    className="form-control" 
-                                    placeholder="Apellido" 
-                                    value={apellidoApoderado} 
-                                    onChange={(e) => setApellidoApoderado(e.target.value)} 
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="Apellido"
+                                    value={apellidoApoderado}
+                                    onChange={(e) => setApellidoApoderado(e.target.value)}
                                 />
                             </div>
                             <div className="mb-3">
-                                <input 
-                                    type="email" 
-                                    className="form-control" 
-                                    placeholder="Correo Electrónico" 
-                                    value={correoApoderado} 
-                                    onChange={(e) => setCorreoApoderado(e.target.value)} 
+                                <input
+                                    type="email"
+                                    className="form-control"
+                                    placeholder="Correo Electrónico"
+                                    value={correoApoderado}
+                                    onChange={(e) => setCorreoApoderado(e.target.value)}
                                 />
                             </div>
                             <div className="mb-3">
-                                <input 
-                                    type="password" 
-                                    className="form-control" 
-                                    placeholder="Contraseña" 
-                                    value={contrasenaApoderado} 
-                                    onChange={(e) => setContrasenaApoderado(e.target.value)} 
+                                <input
+                                    type="password"
+                                    className="form-control"
+                                    placeholder="Contraseña"
+                                    value={contrasenaApoderado}
+                                    onChange={(e) => setContrasenaApoderado(e.target.value)}
                                 />
                             </div>
                             <div className="mb-3">
-                                <input 
-                                    type="text" 
-                                    className="form-control" 
-                                    placeholder="Teléfono" 
-                                    value={telefonoApoderado} 
-                                    onChange={(e) => setTelefonoApoderado(e.target.value)} 
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="Teléfono"
+                                    value={telefonoApoderado}
+                                    onChange={(e) => setTelefonoApoderado(e.target.value)}
                                 />
                             </div>
                             <div className="mb-3">
-                                <input 
-                                    type="text" 
-                                    className="form-control" 
-                                    placeholder="Dirección" 
-                                    value={direccionApoderado} 
-                                    onChange={(e) => setDireccionApoderado(e.target.value)} 
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="Dirección"
+                                    value={direccionApoderado}
+                                    onChange={(e) => setDireccionApoderado(e.target.value)}
                                 />
                             </div>
                             <button className="btn btn-primary" onClick={handleAddApoderado}>Agregar</button>
@@ -350,21 +358,21 @@ export const HomeProfesor = () => {
                         <div className="col-md-6">
                             <h2>Agregar Alumno</h2>
                             <div className="mb-3">
-                                <input 
-                                    type="text" 
-                                    className="form-control" 
-                                    placeholder="Nombre" 
-                                    value={nombreAlumno} 
-                                    onChange={(e) => setNombreAlumno(e.target.value)} 
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="Nombre"
+                                    value={nombreAlumno}
+                                    onChange={(e) => setNombreAlumno(e.target.value)}
                                 />
                             </div>
                             <div className="mb-3">
-                                <input 
-                                    type="text" 
-                                    className="form-control" 
-                                    placeholder="Apellido" 
-                                    value={apellidoAlumno} 
-                                    onChange={(e) => setApellidoAlumno(e.target.value)} 
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="Apellido"
+                                    value={apellidoAlumno}
+                                    onChange={(e) => setApellidoAlumno(e.target.value)}
                                 />
                             </div>
                             <div className="mb-3">
@@ -382,11 +390,11 @@ export const HomeProfesor = () => {
                                 </select>
                             </div>
                             <div className="mb-3 form-check">
-                                <input 
-                                    type="checkbox" 
-                                    className="form-check-input" 
-                                    checked={estaActivo} 
-                                    onChange={(e) => setEstaActivo(e.target.checked)} 
+                                <input
+                                    type="checkbox"
+                                    className="form-check-input"
+                                    checked={estaActivo}
+                                    onChange={(e) => setEstaActivo(e.target.checked)}
                                 />
                                 <label className="form-check-label">¿Está activo?</label>
                             </div>
