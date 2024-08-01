@@ -10,7 +10,9 @@ const getState = ({ getStore, getActions, setStore }) => {
             asignaturas: [],
             calificaciones: [],
             apoderados: [],
-            alumnos: []
+            alumnos: [],
+            alumnosConAsignaturasYCalificaciones: [],
+            alumnosConDetalles: []
         },
         actions: {
             exampleFunction: () => {
@@ -179,12 +181,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     throw error;
                 }
             },
-            logout: () => {
-                sessionStorage.removeItem("accessToken");
-                localStorage.removeItem("userRole");
-                localStorage.removeItem("userId");
-                setStore({ user: null });
-            },
+           
             addAsignatura: async (profesorId, nombreAsignatura) => {
                 const backendUrl = process.env.BACKEND_URL;
                 if (!profesorId || !nombreAsignatura) {
@@ -246,6 +243,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     throw error;
                 }
             },
+            
             getProfesores: async () => {
                 const backendUrl = process.env.BACKEND_URL;
                 try {
@@ -346,7 +344,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                         const errorData = await response.json();
                         throw new Error(errorData.mensaje || `HTTP error! status: ${response.status}`);
                     }
-            
+    
                     const data = await response.json();
                     const store = getStore();
                     setStore({ alumnos: [...store.alumnos, data] });
@@ -376,7 +374,60 @@ const getState = ({ getStore, getActions, setStore }) => {
                     console.error("Error fetching alumnos", error);
                     throw error;
                 }
+            },
+            getAlumnosConDetalles2: async () => {
+                console.log("Iniciando la obtención de detalles de alumnos");
+                const backendUrl = process.env.BACKEND_URL;
+                const apoderadoId = localStorage.getItem("userId");
+                
+                if (!apoderadoId) {
+                    console.error("No hay ID de apoderado en el localStorage");
+                    return;
+                }
+            
+                try {
+                    console.log("Llamando a la API con apoderadoId:", apoderadoId);
+                    const response = await fetch(`${backendUrl}/alumnos-detalles?apoderado_id=${apoderadoId}`, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    });
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        console.error("No pasó el fetch", errorData);
+                        throw new Error(errorData.mensaje || `HTTP error! status: ${response.status}`);
+                    }
+            
+                    const data = await response.json();
+                    console.log("LA DATA", data); // Asegúrate de que esto se ejecute
+            
+                    setStore({ alumnosConDetalles: data });
+                    return data;
+                } catch (error) {
+                    console.error("Error obteniendo alumnos con detalles", error);
+                    throw error;
+                }
+            },
+            //solo para test
+            getAlumnosConDetalles: async () => {
+                const staticData = [
+                    {
+                        id: 1,
+                        nombre: "Juan",
+                        apellido: "Pérez",
+                        asignaturas: [
+                            { id_asignatura: 101, nombre_asignatura: "Matemáticas", calificacion: [85] },
+                            { id_asignatura: 101, nombre_asignatura: "Matemáticas", calificacion: [87] },
+                            { id_asignatura: 102, nombre_asignatura: "Historia", calificacion: 90 }
+                        ]
+                    },
+                ];
+                console.log("Fetched static data:", staticData);
+                setStore({ alumnosConDetalles: staticData });
+                return staticData;
             }
+            
         }
     };
 };
