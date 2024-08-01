@@ -7,6 +7,8 @@ import { RegisterTeacher } from "./pages/registerTeacher";
 import { RegisterGuardian } from "./pages/registerGuardian";
 import { HomeProfesor } from "./pages/homeProfesor"; 
 import { HomeApoderado } from "./pages/homeApoderado"; 
+import { Recomendaciones } from "./pages/recomendaciones";
+import { Calificaciones } from "./pages/calificaciones";
 import injectContext, { Context } from "./store/appContext"; 
 const Layout = () => {
     const { actions } = useContext(Context);
@@ -26,6 +28,8 @@ const Layout = () => {
                         <Route path="/home-profesor" element={<HomeProfesor />} />
                         <Route path="/register/teacher" element={<RegisterTeacher />} />
                         <Route path="/register/guardian" element={<RegisterGuardian />} />
+                        <Route path="/calificaciones" element={<Calificaciones />} />
+                        <Route path="/recomendaciones" element={<Recomendaciones />} />
                     </Routes>
                 </ScrollToTop>
             </BrowserRouter>
