@@ -27,10 +27,10 @@ export const Home = () => {
                         <FontAwesomeIcon icon={faUserPlus} className="me-2" />
                         Regístrate como Profesor
                     </button>
-                    <button type="button" onClick={() => navigate("/register/guardian")} className="boton-registro btn">
+                    {/* <button type="button" onClick={() => navigate("/register/guardian")} className="boton-registro btn">
                         <FontAwesomeIcon icon={faUserPlus} className="me-2" />
                         Regístrate como Apoderado
-                    </button>
+                    </button> */}
                 </div>
             </div>
         </div>

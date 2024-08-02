@@ -2,10 +2,11 @@ import React, { useState, useContext, useEffect } from "react";
 import { Context } from "../store/appContext";
 import { useNavigate } from 'react-router-dom';
 
-
 export const HomeProfesor = () => {
     const { store, actions } = useContext(Context);
     const [asignatura, setAsignatura] = useState("");
+    const [recomendacion, setRecomendacion] = useState("");
+    const [mensaje, setMensaje] = useState(null);
     const [calificacion, setCalificacion] = useState("");
     const [idAsignatura, setIdAsignatura] = useState("");
     const [idAlumno, setIdAlumno] = useState("");
@@ -22,30 +23,60 @@ export const HomeProfesor = () => {
     const [activeTab, setActiveTab] = useState("home");
     const navigate = useNavigate();
 
-
     useEffect(() => {
         const fetchData = async () => {
             try {
                 await actions.getAsignaturas();
                 await actions.getAlumnos();
                 await actions.getApoderados();
+                await actions.obtenerAlumnoAsignaturas(); // Obtener todas las calificaciones
             } catch (error) {
                 console.error("Error fetching data", error);
             }
         };
         fetchData();
-    }, [actions]);
+    }, []);
 
     useEffect(() => {
         if (!sessionStorage.getItem("accessToken")) {
             navigate("/")
         }
     }, []);
+
     const logout = () => {
         sessionStorage.removeItem("accessToken");
         localStorage.removeItem("userId");
         localStorage.removeItem("userRole");
         navigate("/");
+    };
+
+    const handleAddCalificacion = async () => {
+        if (idAlumno && idAsignatura && calificacion.trim() !== "") {
+            try {
+                await actions.addCalificacion(idAlumno, idAsignatura, calificacion);
+                setCalificacion("");
+            } catch (error) {
+                console.error("Error adding calificacion", error);
+            }
+        } else {
+            alert("Por favor, complete todos los campos");
+        }
+    };
+
+    const handleGenerateRecomendacion = async () => {
+        try {
+            const data = await actions.generateRecomendacion(idAlumno, idAsignatura);
+            if (data.recomendacion) {
+                setRecomendacion(data.recomendacion);
+                setMensaje(null);
+            } else if (data.mensaje) {
+                setMensaje(data.mensaje);
+                setRecomendacion(null);
+            }
+            alert("Recomendación generada con éxito");
+        } catch (error) {
+            console.error("Error al generar recomendación:", error);
+        }
     };
 
     const handleAddAsignatura = async () => {
@@ -59,19 +90,6 @@ export const HomeProfesor = () => {
             setAsignatura("");
         } catch (error) {
             console.error("Error adding asignatura", error);
-        }
-    };
-
-    const handleAddCalificacion = async () => {
-        if (idAlumno && idAsignatura && calificacion.trim() !== "") {
-            try {
-                await actions.addCalificacion(idAlumno, idAsignatura, calificacion);
-                setCalificacion("");
-            } catch (error) {
-                console.error("Error adding calificacion", error);
-            }
-        } else {
-            alert("Por favor, complete todos los campos");
         }
     };
 
@@ -168,19 +186,16 @@ export const HomeProfesor = () => {
                     </div>
                 );
             case "calificaciones":
+                console.log("Renderizando calificaciones:", store.calificaciones);
                 return (
                     <div>
                         <h2>Calificaciones</h2>
-                        <ul className="list-group">
-                            {store.calificaciones && store.calificaciones.length > 0 ? (
-                                store.calificaciones.map(calificacion => (
-                                    <li key={calificacion.id} className="list-group-item">
-                                        Alumno: {calificacion.id_alumno}, Asignatura: {calificacion.id_asignatura}, Calificación: {calificacion.calificacion}
-                                    </li>
-                                ))
-                            ) : (
-                                <li className="list-group-item">No hay calificaciones disponibles</li>
-                            )}
+                        <ul>
+                            {store.calificaciones.map(calificacion => (
+                                <li key={calificacion.id}>
+                                    Alumno: {calificacion.alumno_nombre} {calificacion.alumno_apellido}, Asignatura: {calificacion.asignatura_nombre}, Calificación: {calificacion.calificacion}
+                                </li>
+                            ))}
                         </ul>
                     </div>
                 );
@@ -217,9 +232,6 @@ export const HomeProfesor = () => {
                     <div className="collapse navbar-collapse" id="navbarSupportedContent">
                         <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                             <li className="nav-item">
-                                <a className={`nav-link ${activeTab === "home" ? "active" : ""}`} href="#" onClick={() => setActiveTab("home")}>Home</a>
-                            </li>
-                            <li className="nav-item">
                                 <a className={`nav-link ${activeTab === "calificaciones" ? "active" : ""}`} href="#" onClick={() => setActiveTab("calificaciones")}>Calificaciones</a>
                             </li>
                             <li className="nav-item">
@@ -230,6 +242,9 @@ export const HomeProfesor = () => {
                             </li>
                             <li className="nav-item">
                                 <a className={`nav-link ${activeTab === "apoderados" ? "active" : ""}`} href="#" onClick={() => setActiveTab("apoderados")}>Apoderados</a>
+                            </li>
+                            <li className="nav-item">
+                                <a className={`nav-link ${activeTab === "home" ? "active" : ""}`} href="#" onClick={() => setActiveTab("home")}>Generar Recomendaciones</a>
                             </li>
                         </ul>
                         <div className="d-flex justify-content-end">
@@ -399,6 +414,42 @@ export const HomeProfesor = () => {
                                 <label className="form-check-label">¿Está activo?</label>
                             </div>
                             <button className="btn btn-primary" onClick={handleAddAlumno}>Agregar</button>
+                        </div>
+                        <div className="col-md-6">
+                            <h2>Generar Recomendación</h2>
+                            <div className="mb-3">
+                                <select
+                                    className="form-select"
+                                    value={idAsignatura}
+                                    onChange={(e) => setIdAsignatura(e.target.value)}
+                                >
+                                    <option value="">Seleccione una asignatura</option>
+                                    {store.asignaturas && store.asignaturas.map((asignatura) => (
+                                        <option key={asignatura.id} value={asignatura.id}>
+                                            {asignatura.nombre}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div className="mb-3">
+                                <select
+                                    className="form-select"
+                                    value={idAlumno}
+                                    onChange={(e) => setIdAlumno(e.target.value)}
+                                >
+                                    <option value="">Seleccione un alumno</option>
+                                    {store.alumnos && store.alumnos.map((alumno) => (
+                                        <option key={alumno.id} value={alumno.id}>
+                                            {alumno.nombre} {alumno.apellido}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div>
+                                <button className="btn btn-primary" onClick={handleGenerateRecomendacion}>Generar Recomendación</button>
+                                {recomendacion && <div>Recomendación: {recomendacion}</div>}
+                                {mensaje && <div>Mensaje: {mensaje}</div>}
+                            </div>
                         </div>
                     </div>
                 </div>

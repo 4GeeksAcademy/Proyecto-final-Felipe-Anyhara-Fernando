@@ -11,7 +11,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             calificaciones: [],
             apoderados: [],
             alumnos: [],
-            alumnosConAsignaturasYCalificaciones: [],
+            // alumnosConAsignaturasYCalificaciones: [],
             alumnosConDetalles: []
         },
         actions: {
@@ -241,6 +241,50 @@ const getState = ({ getStore, getActions, setStore }) => {
                 } catch (error) {
                     console.error("Error añadiendo calificación", error);
                     throw error;
+                }
+            },
+
+            generateRecomendacion: async (idAlumno, idAsignatura) => {
+                const backendUrl = process.env.BACKEND_URL;
+                if (!idAlumno || !idAsignatura) {
+                    console.error("ID de alumno, ID de asignatura son requeridos");
+                    return;
+                }
+                try {
+                    const response = await fetch(`${backendUrl}/api/gemini`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            id_alumno: idAlumno,
+                            id_asignatura: idAsignatura,
+                        })
+                    });
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.mensaje || `HTTP error! status: ${response.status}`);
+                    }
+            
+                    const data = await response.json();
+                    console.log("Recomendación añadida con éxito", data);
+                    return data;
+                } catch (error) {
+                    console.error("Error añadiendo recomendación", error);
+                    throw error;
+                }
+            },
+
+            obtenerAlumnoAsignaturas: async () => {
+                const backendUrl = process.env.BACKEND_URL;
+                try {
+                    const response = await fetch(`${backendUrl}/api/alumno_asignaturas`);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const data = await response.json();
+                    setStore({ calificaciones: data });
+                    console.log("Calificaciones fetched successfully", data);
+                } catch (error) {
+                    console.error("Error fetching calificaciones", error);
                 }
             },
             
