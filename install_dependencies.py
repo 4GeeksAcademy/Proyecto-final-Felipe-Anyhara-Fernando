@@ -7,7 +7,9 @@ dependencies = [
     "psycopg2-binary",
     "flask_migrate",
     "flask_swagger",
-    "flask_admin"
+    "flask_admin",
+    "google-generativeai",
+    "python-dotenv",
 ]
 # Instalar cada dependencia usando pip
 for package in dependencies:

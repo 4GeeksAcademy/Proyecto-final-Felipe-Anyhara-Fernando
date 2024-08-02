@@ -2,13 +2,19 @@ from flask import Blueprint, request, jsonify
 from werkzeug.security import check_password_hash, generate_password_hash
 from api.models import Apoderado, Profesor, Asignatura, Alumno, AlumnoAsignatura, Recomendacion, db
 from flask_cors import CORS 
-
-api = Blueprint('api', __name__)
-
+from dotenv import load_dotenv
+import google.generativeai as genai
+import os
 from flask import Blueprint, request, jsonify
 from werkzeug.security import check_password_hash
 from flask_jwt_extended import create_access_token
 from api.models import Apoderado, Profesor, db
+
+load_dotenv
+api_key = os.getenv('GOOGLE_API_KEY')
+if not api_key:
+    raise EnvironmentError("La clave de API de Google no está configurada. Asegúrate de establecer la variable de entorno 'GOOGLE_API_KEY'.")
+genai.configure(api_key = api_key)
 
 api = Blueprint('api', __name__)
 
@@ -342,3 +348,64 @@ def get_alumnos_con_detalles():
     except Exception as e:
         print("Error en la función get_alumnos_con_detalles: %s", str(e))
         return jsonify({"Error desde el backend": str(e)}), 500
+    
+@api.route('/gemini', methods=['POST'])
+def get_gemini():
+    # Obtener parámetros del cuerpo de la solicitud
+    data = request.get_json()
+    id_alumno = data.get('id_alumno')
+    id_asignatura = data.get('id_asignatura')
+    if not id_alumno or not id_asignatura:
+        return jsonify({"error": "Se requieren los parámetros 'id_alumno' e 'id_asignatura'"}), 400
+    try:
+        # Convertir los parámetros a enteros
+        id_alumno = int(id_alumno)
+        id_asignatura = int(id_asignatura)
+    except ValueError:
+        return jsonify({"error": "Los parámetros deben ser enteros"}), 400
+    # Calcular el promedio de las calificaciones del alumno en la asignatura
+    promedio_calificacion = db.session.query(db.func.avg(AlumnoAsignatura.calificacion))\
+        .filter(AlumnoAsignatura.id_alumno == id_alumno, AlumnoAsignatura.id_asignatura == id_asignatura)\
+        .scalar()
+    if promedio_calificacion is None:
+        return jsonify({"error": "No se encontraron calificaciones para este alumno y asignatura"}), 404
+    # Verificar el promedio de la calificación
+    if promedio_calificacion < 4:
+        # Obtener el nombre de la asignatura
+        asignatura = Asignatura.query.get(id_asignatura)
+        if not asignatura:
+            return jsonify({"error": "Asignatura no encontrada"}), 404
+        # Crear el contenido de la solicitud para el modelo de IA
+        contenido = (
+            f"Actuaras como un profesor de {asignatura.nombre} y debes darme una recomendacion de ejercicios prácticos para que un estudiante pueda aprender mejor. "
+            f"{asignatura.nombre} es una materia que se imparte en tercero básico y es muy importante para el desarrollo de habilidades en las áreas de conocimiento relevantes."
+        )
+        # Configurar el modelo de IA y generar el contenido
+        model = genai.GenerativeModel(model_name="gemini-1.5-flash")
+        response = model.generate_content(contenido)
+        recomendacion_texto = response.text
+        # Guardar la recomendación en la base de datos
+        nueva_recomendacion = Recomendacion(
+            id_alumno=id_alumno,
+            recomendacion=recomendacion_texto
+        )
+        db.session.add(nueva_recomendacion)
+        db.session.commit()
+        # Devolver la recomendación generada
+        return jsonify({
+            "recomendacion": recomendacion_texto
+        }), 200
+    else:
+        return jsonify({
+            "mensaje": "La calificación promedio es suficiente, no se requieren recomendaciones."
+        }), 200
+    
+@api.route('/recomendaciones/<int:id_alumno>', methods=['GET'])
+def obtener_recomendaciones(id_alumno):
+    # Consultar todas las recomendaciones para el alumno especificado
+    recomendaciones = Recomendacion.query.filter_by(id_alumno=id_alumno).all()
+    if not recomendaciones:
+        return jsonify({"mensaje": "No se encontraron recomendaciones para el alumno con ID {}".format(id_alumno)}), 404
+    # Serializar las recomendaciones
+    result = [recomendacion.serialize() for recomendacion in recomendaciones]
+    return jsonify(result), 200
