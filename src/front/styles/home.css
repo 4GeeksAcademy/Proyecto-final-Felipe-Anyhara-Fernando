@@ -137,3 +137,25 @@ body {
 .navbar-text {
   color: #f0ad4e;
 }
+
+
+.imagen-a {
+  display: flex;
+  width: 601px;
+  height: 410px;
+  border-radius: 7.5px;
+}
+
+.imagen-b {
+  display: flex;
+  width: 501px;
+  height: 410px;
+  border-radius: 7.5px;
+}
+
+.imagen-c {
+  display: flex;
+  width: 607px;
+  height: 410px;
+  border-radius: 7.5px;
+}
