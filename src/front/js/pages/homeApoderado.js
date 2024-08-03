@@ -1,110 +1,87 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { Context } from '../store/appContext'; // Verifica esta ruta
-import { Calificaciones } from "./calificaciones"; // Importa el componente
-import { Recomendaciones } from "./recomendaciones";
+import React, { useState, useContext, useEffect } from "react";
+import { Context } from "../store/appContext";
 import { useNavigate } from 'react-router-dom';
 
-
 export const HomeApoderado = () => {
-    const { actions, store } = useContext(Context); // Obtén actions y store del contexto
-    const [activeTab, setActiveTab] = useState('calificaciones');
-    const [studentData, setStudentData] = useState(null);
+    const { store, actions } = useContext(Context);
     const navigate = useNavigate();
+    const [recomendaciones, setRecomendaciones] = useState([]);
+
     useEffect(() => {
-        if (!sessionStorage.getItem("accessToken")){
-            navigate("/")
-        }
+        const fetchData = async () => {
+            try {
+                await actions.obtenerAlumnoAsignaturas(); // Obtener todas las calificaciones
+                const idAlumno = localStorage.getItem("userId") || 2; // Obtener el ID del alumno (ajusta según sea necesario)
+                await actions.obtenerRecomendaciones(idAlumno);
+            } catch (error) {
+                console.error("Error fetching data", error);
+            }
+        };
+        fetchData();
     }, []);
+
+    useEffect(() => {
+        if (!sessionStorage.getItem("accessToken")) {
+            navigate("/");
+        }
+    }, [navigate]);
+
+    useEffect(() => {
+        console.log("Store recomendaciones:", store.recomendaciones); // Log para verificar el contenido de store.recomendaciones
+        setRecomendaciones(store.recomendaciones);
+    }, [store.recomendaciones]);
+
     const logout = () => {
         sessionStorage.removeItem("accessToken");
         localStorage.removeItem("userId");
         localStorage.removeItem("userRole");
         navigate("/");
     };
-    useEffect(() => {
-        const fetchStudentData = async () => {
-            try {
-                const data = await actions.getStudentData(); // Obtén los datos del alumno
-                setStudentData(data);
-            } catch (error) {
-                console.error('Error fetching student data:', error);
-            }
-        };
-        fetchStudentData();
-    }, [actions]);
-    const renderContent = () => {
-        switch (activeTab) {
-            case 'calificaciones':
-                return <Calificaciones studentData={studentData} />;
-            case 'recomendaciones':
-                return <Recomendaciones />;
-            default:
-                return <h1>Bienvenidos Apoderados</h1>;
-        }
-    };
+
     return (
         <div className="container-fluid">
             <nav className="navbar navbar-expand-lg navbar-light bg-light">
                 <div className="container-fluid">
-                    <a className="navbar-brand" href="#">APODERADO DASHBOARD</a>
-                    <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <a className="navbar-brand" href="#">Apoderado Dashboard</a>
+                    <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                         <span className="navbar-toggler-icon"></span>
                     </button>
                     <div className="collapse navbar-collapse" id="navbarSupportedContent">
                         <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                             <li className="nav-item">
-                                <a
-                                    className={`nav-link ${activeTab === 'calificaciones' ? 'active' : ''}`}
-                                    href="#"
-                                    onClick={() => setActiveTab('calificaciones')}
-                                >
-                                    Calificaciones
-                                </a>
-                            </li>
-                            <li className="nav-item">
-                                <a
-                                    className={`nav-link ${activeTab === 'recomendaciones' ? 'active' : ''}`}
-                                    href="#"
-                                    onClick={() => setActiveTab('recomendaciones')}
-                                >
-                                    Recomendaciones
-                                </a>
+                                <a className={`nav-link`} href="#" onClick={() => navigate("/")}>Inicio</a>
                             </li>
                         </ul>
                         <div className="d-flex justify-content-end">
-                        <button className="btn btn-outline-success" onClick={logout} type="button">Cerrar Sesión</button>
+                            <button className="btn btn-outline-danger" onClick={logout} type="button">Cerrar Sesión</button>
                         </div>
                     </div>
                 </div>
             </nav>
             <div className="container mt-4">
                 <div className="border border-secondary rounded p-4 bg-light">
-                    {studentData ? (
-                        <>
-                            <h2>Información del Alumno</h2>
-                            <p><strong>ID:</strong> {studentData.id}</p>
-                            <p><strong>Nombre:</strong> {studentData.nombre}</p>
-                            <p><strong>Apellido:</strong> {studentData.apellido}</p>
-                            <p><strong>Asignaturas:</strong></p>
-                            <ul>
-                                {studentData.asignaturas.map(asignatura => (
-                                    <li key={asignatura.id}>{asignatura.nombre}</li>
-                                ))}
-                            </ul>
-                            <p><strong>Calificaciones:</strong></p>
-                            <ul>
-                                {studentData.calificaciones.map(calif => (
-                                    <li key={calif.id}>
-                                        {calif.asignaturaNombre}: {calif.calificacion}
-                                    </li>
-                                ))}
-                            </ul>
-                        </>
-                    ) : (
-                        <p>Cargando información del alumno...</p>
-                    )}
-                    {renderContent()}
+                    <h2>Calificaciones</h2>
+                    <ul>
+                        {store.calificaciones.map(calificacion => (
+                            <li key={calificacion.id}>
+                                Alumno: {calificacion.nombre_alumno} {calificacion.apellido_alumno}, Asignatura: {calificacion.nombre_asignatura}, Calificación: {calificacion.calificacion}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+                <div className="border border-secondary rounded p-4 bg-light mt-4">
+                    <h2>Recomendaciones</h2>
+                    <ul>
+                        {recomendaciones.length > 0 ? (
+                            recomendaciones.map(recomendacion => (
+                                <li key={recomendacion.id}>
+                                    {recomendacion.texto}
+                                </li>
+                            ))
+                        ) : (
+                            <li>No hay recomendaciones disponibles</li>
+                        )}
+                    </ul>
                 </div>
             </div>
         </div>

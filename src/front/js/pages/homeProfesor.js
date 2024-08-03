@@ -193,7 +193,7 @@ export const HomeProfesor = () => {
                         <ul>
                             {store.calificaciones.map(calificacion => (
                                 <li key={calificacion.id}>
-                                    Alumno: {calificacion.alumno_nombre} {calificacion.alumno_apellido}, Asignatura: {calificacion.asignatura_nombre}, Calificación: {calificacion.calificacion}
+                                    Alumno: {calificacion.nombre_alumno} {calificacion.apellido_alumno}, Asignatura: {calificacion.nombre_asignatura}, Calificación: {calificacion.calificacion}
                                 </li>
                             ))}
                         </ul>
@@ -242,9 +242,6 @@ export const HomeProfesor = () => {
                             </li>
                             <li className="nav-item">
                                 <a className={`nav-link ${activeTab === "apoderados" ? "active" : ""}`} href="#" onClick={() => setActiveTab("apoderados")}>Apoderados</a>
-                            </li>
-                            <li className="nav-item">
-                                <a className={`nav-link ${activeTab === "home" ? "active" : ""}`} href="#" onClick={() => setActiveTab("home")}>Generar Recomendaciones</a>
                             </li>
                         </ul>
                         <div className="d-flex justify-content-end">

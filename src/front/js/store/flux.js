@@ -11,8 +11,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             calificaciones: [],
             apoderados: [],
             alumnos: [],
-            // alumnosConAsignaturasYCalificaciones: [],
-            alumnosConDetalles: []
+            recomendaciones: []
         },
         actions: {
             exampleFunction: () => {
@@ -63,6 +62,22 @@ const getState = ({ getStore, getActions, setStore }) => {
                     throw error;
                 }
             },
+
+            obtenerRecomendaciones: async (idAlumno) => {
+                const backendUrl = process.env.BACKEND_URL;
+                try {
+                    const response = await fetch(`${backendUrl}/api/recomendaciones/${idAlumno}`);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const data = await response.json();
+                    setStore({ recomendaciones: data });
+                    console.log("Recomendaciones fetched successfully", data);
+                } catch (error) {
+                    console.error("Error fetching recomendaciones", error);
+                }
+            },
+
             getPrivateData: async () => {
                 try {
                     const token = sessionStorage.getItem("accessToken");
@@ -86,6 +101,25 @@ const getState = ({ getStore, getActions, setStore }) => {
                     throw error;
                 }
             },
+    
+            obtenerAlumnoAsignaturasPorId: async (id_alumno) => {
+                const backendUrl = process.env.BACKEND_URL;
+                try {
+                    const response = await fetch(`${backendUrl}/api/alumno_asignaturas/${id_alumno}`);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const data = await response.json();
+                    // Solo retorna los datos, no actualiza el estado del store
+                    console.log("Calificaciones fetched successfully", data);
+                    return data;
+                } catch (error) {
+                    console.error("Error fetching calificaciones", error);
+                    // Devuelve un array vacío en caso de error
+                    return [];
+                }
+            },
+
             loadUserFromToken: async () => {
                 const token = sessionStorage.getItem("accessToken");
                 const userId = localStorage.getItem("userId");
@@ -347,26 +381,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     throw error;
                 }
             },
-            getCalificaciones: async (idAlumno) => {
-                const backendUrl = process.env.BACKEND_URL;
-                try {
-                    const response = await fetch(`${backendUrl}/api/calificaciones/${idAlumno}`, {
-                        method: 'GET',
-                        headers: { 'Content-Type': 'application/json' }
-                    });
-                    if (!response.ok) {
-                        const errorData = await response.json();
-                        throw new Error(errorData.mensaje || `HTTP error! status: ${response.status}`);
-                    }
             
-                    const data = await response.json();
-                    setStore({ calificaciones: data });
-                    return data;
-                } catch (error) {
-                    console.error("Error fetching calificaciones", error);
-                    throw error;
-                }
-            },
             registerAlumno: async (nombre, apellido, idApoderado, estaActivo = false) => {
                 const backendUrl = process.env.BACKEND_URL;
                 if (!nombre || !apellido || !idApoderado) {
@@ -416,40 +431,6 @@ const getState = ({ getStore, getActions, setStore }) => {
                     return data;
                 } catch (error) {
                     console.error("Error fetching alumnos", error);
-                    throw error;
-                }
-            },
-            getAlumnosConDetalles2: async () => {
-                console.log("Iniciando la obtención de detalles de alumnos");
-                const backendUrl = process.env.BACKEND_URL;
-                const apoderadoId = localStorage.getItem("userId");
-                
-                if (!apoderadoId) {
-                    console.error("No hay ID de apoderado en el localStorage");
-                    return;
-                }
-            
-                try {
-                    console.log("Llamando a la API con apoderadoId:", apoderadoId);
-                    const response = await fetch(`${backendUrl}/alumnos-detalles?apoderado_id=${apoderadoId}`, {
-                        method: 'GET',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        }
-                    });
-                    if (!response.ok) {
-                        const errorData = await response.json();
-                        console.error("No pasó el fetch", errorData);
-                        throw new Error(errorData.mensaje || `HTTP error! status: ${response.status}`);
-                    }
-            
-                    const data = await response.json();
-                    console.log("LA DATA", data); // Asegúrate de que esto se ejecute
-            
-                    setStore({ alumnosConDetalles: data });
-                    return data;
-                } catch (error) {
-                    console.error("Error obteniendo alumnos con detalles", error);
                     throw error;
                 }
             },

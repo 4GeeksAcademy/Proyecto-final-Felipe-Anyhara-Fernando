@@ -1,3 +1,5 @@
+from flask import Flask, jsonify
+from flask_cors import CORS
 from flask import Blueprint, request, jsonify
 from werkzeug.security import check_password_hash, generate_password_hash
 from api.models import Apoderado, Profesor, Asignatura, Alumno, AlumnoAsignatura, Recomendacion, db
@@ -300,6 +302,7 @@ def obtener_alumno_asignaturas():
             "id": registro.id,
             "id_alumno": registro.id_alumno,
             "nombre_alumno": alumno.nombre,
+            "apellido_alumno": alumno.apellido,
             "id_asignatura": registro.id_asignatura,
             "nombre_asignatura": asignatura.nombre,
             "calificacion": registro.calificacion
@@ -377,8 +380,8 @@ def get_gemini():
             return jsonify({"error": "Asignatura no encontrada"}), 404
         # Crear el contenido de la solicitud para el modelo de IA
         contenido = (
-            f"Actuaras como un profesor de {asignatura.nombre} y debes darme una recomendacion de ejercicios prácticos para que un estudiante pueda aprender mejor. "
-            f"{asignatura.nombre} es una materia que se imparte en tercero básico y es muy importante para el desarrollo de habilidades en las áreas de conocimiento relevantes."
+            f"Actuaras como un profesor de {asignatura.nombre} y debes darme una sugerencia de ejercicios prácticos y aplicables con el proposito de mejorar el rendimiento de un alumno. "
+            f"{asignatura.nombre} es una asignatura que se imparte en tercero básico y es muy importante para el desarrollo cognitivo."
         )
         # Configurar el modelo de IA y generar el contenido
         model = genai.GenerativeModel(model_name="gemini-1.5-flash")
@@ -408,4 +411,28 @@ def obtener_recomendaciones(id_alumno):
         return jsonify({"mensaje": "No se encontraron recomendaciones para el alumno con ID {}".format(id_alumno)}), 404
     # Serializar las recomendaciones
     result = [recomendacion.serialize() for recomendacion in recomendaciones]
+    return jsonify(result), 200
+
+@api.route('/alumno_asignaturas/<int:id_alumno>', methods=['GET'])
+def obtener_alumno_asignaturas_por_id_alumno(id_alumno):
+    # Consultar todas las recomendaciones para el alumno especificado
+    registros = AlumnoAsignatura.query.filter_by(id_alumno=id_alumno).all()
+    if not registros:
+        return jsonify({"mensaje": "No se encontraron registros para el alumno con ID {}".format(id_alumno)}), 404
+    registros = (
+        db.session.query(AlumnoAsignatura, Alumno, Asignatura)
+        .join(Alumno, AlumnoAsignatura.id_alumno == id_alumno)
+        .join(Asignatura, AlumnoAsignatura.id_asignatura == Asignatura.id)
+        .all()
+    )
+    result = []
+    for registro, alumno, asignatura in registros:
+        result.append({
+            "id": registro.id,
+            "id_alumno": registro.id_alumno,
+            "nombre_alumno": alumno.nombre,
+            "id_asignatura": registro.id_asignatura,
+            "nombre_asignatura": asignatura.nombre,
+            "calificacion": registro.calificacion
+        })
     return jsonify(result), 200
