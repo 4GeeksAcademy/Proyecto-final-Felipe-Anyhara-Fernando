@@ -5,13 +5,13 @@ import { useNavigate } from 'react-router-dom';
 export const HomeApoderado = () => {
     const { store, actions } = useContext(Context);
     const navigate = useNavigate();
-    const [recomendaciones, setRecomendaciones] = useState([]);
+    const [recomendacion, setRecomendacion] = useState([]);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 await actions.obtenerAlumnoAsignaturas(); // Obtener todas las calificaciones
-                const idAlumno = localStorage.getItem("userId") || 2; // Obtener el ID del alumno (ajusta según sea necesario)
+                const idAlumno = localStorage.getItem(idAlumno) || 2; 
                 await actions.obtenerRecomendaciones(idAlumno);
             } catch (error) {
                 console.error("Error fetching data", error);
@@ -28,8 +28,9 @@ export const HomeApoderado = () => {
 
     useEffect(() => {
         console.log("Store recomendaciones:", store.recomendaciones); // Log para verificar el contenido de store.recomendaciones
-        setRecomendaciones(store.recomendaciones);
+        setRecomendacion(store.recomendaciones);
     }, [store.recomendaciones]);
+    console.log("recomendacion:", recomendacion);
 
     const logout = () => {
         sessionStorage.removeItem("accessToken");
@@ -72,10 +73,10 @@ export const HomeApoderado = () => {
                 <div className="border border-secondary rounded p-4 bg-light mt-4">
                     <h2>Recomendaciones</h2>
                     <ul>
-                        {recomendaciones.length > 0 ? (
-                            recomendaciones.map(recomendacion => (
+                        {recomendacion.length > 0 ? (
+                            recomendacion.map(recomendacion => (
                                 <li key={recomendacion.id}>
-                                    {recomendacion.texto}
+                                    {recomendacion.recomendacion}
                                 </li>
                             ))
                         ) : (

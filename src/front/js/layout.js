@@ -29,7 +29,7 @@ const Layout = () => {
                         <Route path="/register/teacher" element={<RegisterTeacher />} />
                         <Route path="/register/guardian" element={<RegisterGuardian />} />
                         <Route path="/calificaciones" element={<Calificaciones />} />
-                        <Route path="/recomendaciones" element={<Recomendaciones />} />
+                        <Route path="/recomendaciones/:alumno_id" element={<Recomendaciones />} />
                     </Routes>
                 </ScrollToTop>
             </BrowserRouter>

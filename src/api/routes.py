@@ -400,7 +400,7 @@ def get_gemini():
         }), 200
     else:
         return jsonify({
-            "mensaje": "La calificación promedio es suficiente, no se requieren recomendaciones."
+            "mensaje": "La calificación esta por sobre el rango minimo exigido, por consecuencia no se requieren recomendaciones."
         }), 200
     
 @api.route('/recomendaciones/<int:id_alumno>', methods=['GET'])
