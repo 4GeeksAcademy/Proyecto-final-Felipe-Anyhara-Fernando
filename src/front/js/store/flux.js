@@ -434,24 +434,6 @@ const getState = ({ getStore, getActions, setStore }) => {
                     throw error;
                 }
             },
-            //solo para test
-            getAlumnosConDetalles: async () => {
-                const staticData = [
-                    {
-                        id: 1,
-                        nombre: "Juan",
-                        apellido: "Pérez",
-                        asignaturas: [
-                            { id_asignatura: 101, nombre_asignatura: "Matemáticas", calificacion: [85] },
-                            { id_asignatura: 101, nombre_asignatura: "Matemáticas", calificacion: [87] },
-                            { id_asignatura: 102, nombre_asignatura: "Historia", calificacion: 90 }
-                        ]
-                    },
-                ];
-                console.log("Fetched static data:", staticData);
-                setStore({ alumnosConDetalles: staticData });
-                return staticData;
-            }
             
         }
     };
