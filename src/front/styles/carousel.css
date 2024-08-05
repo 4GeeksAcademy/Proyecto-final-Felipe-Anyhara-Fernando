@@ -1,0 +1,65 @@
+/* carousel.css */
+
+/* General carousel styling */
+.carousel {
+    position: relative;
+}
+
+.carousel-inner {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    background: rgba(0, 0, 0, 0.5); /* Adding a semi-transparent background */
+}
+
+.carousel-item img {
+    filter: brightness(50%); /* Darken the image for better text readability */
+}
+
+.carousel-caption {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    text-align: center;
+    color: #fff;
+    padding: 1rem;
+}
+
+.carousel-content {
+    background-color: rgba(0, 0, 0, 0.7); /* Dark semi-transparent background for text */
+    padding: 1.5rem;
+    border-radius: 10px;
+}
+
+.navbar {
+    background-color: #343a40; /* Dark background for navbar */
+}
+
+.nav-link {
+    color: #ffc107; /* Yellow text color for nav links */
+}
+
+.nav-link.active {
+    border-bottom: 2px solid #ffc107; /* Underline active link */
+}
+
+.boton-login,
+.boton-registro {
+    background-color: #ffc107; /* Yellow background for buttons */
+    color: #343a40; /* Dark text color for buttons */
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.boton-login:hover,
+.boton-registro:hover {
+    background-color: #e0a800; /* Darker yellow on hover */
+}
+
+.boton-login:focus,
+.boton-registro:focus {
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.5);
+}
