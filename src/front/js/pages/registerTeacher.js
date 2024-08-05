@@ -1,9 +1,10 @@
 import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Context } from "../store/appContext";  
+import { Context } from "../store/appContext";
 import "../../styles/register.css";
-//Modificado para usar la accion de flux para registrar profesores
-//Incluyan todos los campos
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons"; // Importa los íconos
+
 export const RegisterTeacher = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -15,6 +16,7 @@ export const RegisterTeacher = () => {
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
     const { actions } = useContext(Context);
+
     const handleRegister = async (event) => {
         event.preventDefault();
         if (!email || !password || !firstName || !lastName || !title || !specialization) {
@@ -29,9 +31,10 @@ export const RegisterTeacher = () => {
             }, 3000);
         } catch (error) {
             setMessage(`Error registrando profesor: ${error.message}`);
-            console.error("Error registering professor", error);
+            console.error("Error registrando profesor", error);
         }
     };
+
     return (
         <div className="contenedor-principal-form">
             <div className="contenedor-form container py-5">
@@ -83,8 +86,8 @@ export const RegisterTeacher = () => {
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
                             />
-                            <span className="input-group-text" onClick={() => setShowPassword(!showPassword)}>
-                                <i className={showPassword ? "fa-regular fa-eye-slash" : "fa-regular fa-eye"}></i>
+                            <span className="input-group-text" onClick={() => setShowPassword(!showPassword)} style={{ cursor: 'pointer' }}>
+                                <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
                             </span>
                         </div>
                     </div>

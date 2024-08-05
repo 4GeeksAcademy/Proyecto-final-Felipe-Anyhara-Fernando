@@ -32,14 +32,14 @@ export const Home = () => {
                 return (
                     <div className="carousel-content">
                         <h3 className="text-light">Misión</h3>
-                        <p>Ser la plataforma líder en la transformación digital de la educación, potenciando la colaboración y comunicación entre profesores, apoderados y estudiantes. Nos esforzamos por crear un entorno educativo más eficiente y accesible, donde cada estudiante tenga el apoyo necesario para alcanzar su máximo potencial académico.</p>
+                        <p>Nuestra misión es proporcionar herramientas educativas innovadoras que optimicen el trabajo de los profesores y faciliten una comunicación efectiva entre apoderados y el entorno educativo de sus hijos.</p>
                     </div>
                 );
             case "vision":
                 return (
                     <div className="carousel-content">
                         <h3 className="text-light">Visión</h3>
-                        <p>Nuestra misión es optimizar el trabajo de los profesores y facilitar una comunicación rápida y efectiva entre apoderados y el entorno educativo de sus hijos. Proveemos herramientas integradas para que los profesores gestionen sus clases de manera eficiente, simplifiquen la evaluación del progreso académico y generen contenido de apoyo personalizado. Al mismo tiempo, ofrecemos a los apoderados acceso inmediato a la información académica de sus hijos, promoviendo un seguimiento cercano y una comunicación directa con los educadores. Con nuestra plataforma, buscamos mejorar la colaboración entre profesores y apoderados para apoyar el éxito académico de los estudiantes.</p>
+                        <p>Visualizamos un futuro donde el trabajo de los profesores sea optimizado y la comunicación entre los apoderados y el entorno educativo de sus hijos sea rápida y efectiva, mejorando la colaboración para apoyar el éxito académico de los estudiantes.</p>
                     </div>
                 );
             case "quienesSomos":
@@ -99,7 +99,9 @@ export const Home = () => {
                             <div className="carousel-item active">
                                 <img src="https://img.freepik.com/foto-gratis/desenfoque-lujo-abstracto-degradado-gris-oscuro-negro-utilizado-como-pared-estudio-fondo-mostrar-sus-productos_1258-102010.jpg?t=st=1722835461~exp=1722839061~hmac=3a2ef0f6dc0b29e78c25d2d068c32a85c7846dc09ec2a3f8cac1ae2799e46dc4&w=1380" className="d-block w-100" alt="Background" />
                                 <div className="carousel-caption d-flex flex-column justify-content-center align-items-center">
-                                    {renderCarouselItemContent()}
+                                    <div className="carousel-content-wrapper">
+                                        {renderCarouselItemContent()}
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -113,11 +115,11 @@ export const Home = () => {
                         </button>
                     </div>
                     <div className="container-fluid mt-4">
-                        <button type="button" onClick={() => navigate("/login")} className="boton-login btn btn-primary me-3">
+                        <button type="button" onClick={() => navigate("/login")} className="boton-login btn me-3">
                             <FontAwesomeIcon icon={faUser} className="me-2" />
                             Iniciar Sesión
                         </button>
-                        <button type="button" onClick={() => navigate("/register/teacher")} className="boton-registro btn btn-secondary">
+                        <button type="button" onClick={() => navigate("/register/teacher")} className="boton-registro btn">
                             <FontAwesomeIcon icon={faUserPlus} className="me-2" />
                             Regístrate como Profesor
                         </button>

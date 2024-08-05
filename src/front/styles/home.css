@@ -1,3 +1,6 @@
+@import '~@fortawesome/fontawesome-free/css/all.min.css';
+
+
 body {
   margin: 0;
   /* Elimina el margen por defecto del body */
@@ -139,23 +142,43 @@ body {
 }
 
 
-.imagen-a {
-  display: flex;
-  width: 601px;
-  height: 410px;
-  border-radius: 7.5px;
+.carousel-inner {
+  position: relative;
+  height: 60vh; /* Ajusta la altura según sea necesario */
 }
 
-.imagen-b {
-  display: flex;
-  width: 501px;
-  height: 410px;
-  border-radius: 7.5px;
+.carousel-item img {
+  object-fit: cover;
+  height: 100%;
 }
 
-.imagen-c {
-  display: flex;
-  width: 607px;
-  height: 410px;
-  border-radius: 7.5px;
+.carousel-caption {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  width: 80%;
+  padding: 20px;
 }
+
+.carousel-content-wrapper {
+  padding: 20px;
+  border-radius: 10px;
+  color: #fff;
+}
+
+.carousel-content h3 {
+  font-size: 2rem; /* Tamaño de fuente para el título */
+  margin-bottom: 1rem;
+}
+
+.carousel-content p {
+  font-size: 1.2rem; /* Tamaño de fuente para el contenido */
+}
+
+
+
+
+
+
