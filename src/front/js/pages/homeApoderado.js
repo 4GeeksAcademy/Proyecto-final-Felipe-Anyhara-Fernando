@@ -11,7 +11,7 @@ export const HomeApoderado = () => {
         const fetchData = async () => {
             try {
                 await actions.obtenerAlumnoAsignaturas(); // Obtener todas las calificaciones
-                const idAlumno = localStorage.getItem(idAlumno) || 2; 
+                const idAlumno = localStorage.getItem(idAlumno) || 3; 
                 await actions.obtenerRecomendaciones(idAlumno);
             } catch (error) {
                 console.error("Error fetching data", error);
