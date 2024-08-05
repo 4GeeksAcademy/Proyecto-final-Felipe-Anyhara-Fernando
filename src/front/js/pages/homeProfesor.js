@@ -1,6 +1,9 @@
 import React, { useState, useContext, useEffect } from "react";
 import { Context } from "../store/appContext";
 import { useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+
 
 export const HomeProfesor = () => {
     const { store, actions } = useContext(Context);
@@ -21,6 +24,8 @@ export const HomeProfesor = () => {
     const [idApoderado, setIdApoderado] = useState("");
     const [estaActivo, setEstaActivo] = useState(false);
     const [activeTab, setActiveTab] = useState("home");
+    const [showPassword, setShowPassword] = useState(false);
+
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -339,13 +344,22 @@ export const HomeProfesor = () => {
                                 />
                             </div>
                             <div className="mb-3">
-                                <input
-                                    type="password"
-                                    className="form-control"
-                                    placeholder="Contraseña"
-                                    value={contrasenaApoderado}
-                                    onChange={(e) => setContrasenaApoderado(e.target.value)}
-                                />
+                                <div className="input-group">
+                                    <input
+                                        type={showPassword ? "text" : "password"}
+                                        className="form-control"
+                                        placeholder="Contraseña"
+                                        value={contrasenaApoderado}
+                                        onChange={(e) => setContrasenaApoderado(e.target.value)}
+                                    />
+                                    <span
+                                        className="input-group-text"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        style={{ cursor: 'pointer' }}
+                                    >
+                                        <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
+                                    </span>
+                                </div>
                             </div>
                             <div className="mb-3">
                                 <input
