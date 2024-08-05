@@ -6,22 +6,37 @@ import { faUser, faUserPlus } from "@fortawesome/free-solid-svg-icons";
 
 export const Home = () => {
     const navigate = useNavigate();
-    const [selectedTab, setSelectedTab] = useState(null);
+    const [selectedTab, setSelectedTab] = useState("mision");
 
     const handleTabClick = (tab) => {
         setSelectedTab(tab);
     };
 
-    const renderContent = () => {
+    const renderCarouselItemContent = () => {
         switch (selectedTab) {
             case "mision":
-                return <p>Nuestra misión es proporcionar una educación de calidad...</p>;
+                return (
+                    <div className="carousel-content">
+                        <h3 className="text-light">Misión</h3>
+                        <p>Ser la plataforma líder en la transformación digital de la educación, potenciando la colaboración y comunicación entre profesores, apoderados y estudiantes. Nos esforzamos por crear un entorno educativo más eficiente y accesible, donde cada estudiante tenga el apoyo necesario para alcanzar su máximo potencial académico.</p>
+                    </div>
+                );
             case "vision":
-                return <p>Visión: Ser líderes en la educación digital...</p>;
+                return (
+                    <div className="carousel-content">
+                        <h3 className="text-light">Visión</h3>
+                        <p>Nuestra misión es optimizar el trabajo de los profesores y facilitar una comunicación rápida y efectiva entre apoderados y el entorno educativo de sus hijos. Proveemos herramientas integradas para que los profesores gestionen sus clases de manera eficiente, simplifiquen la evaluación del progreso académico y generen contenido de apoyo personalizado. Al mismo tiempo, ofrecemos a los apoderados acceso inmediato a la información académica de sus hijos, promoviendo un seguimiento cercano y una comunicación directa con los educadores. Con nuestra plataforma, buscamos mejorar la colaboración entre profesores y apoderados para apoyar el éxito académico de los estudiantes.</p>
+                    </div>
+                );
             case "quienesSomos":
-                return <p>¿Quiénes Somos?: Somos una organización dedicada a...</p>;
+                return (
+                    <div className="carousel-content">
+                        <h3 className="text-light">¿Quiénes Somos?</h3>
+                        <p>Somos una plataforma innovadora dedicada a mejorar la eficiencia y efectividad de la educación. Nuestro equipo está compuesto por profesionales apasionados por la tecnología y la enseñanza, comprometidos en proporcionar soluciones que faciliten la labor educativa y fortalezcan la colaboración entre todos los actores del entorno académico. Creemos en el poder de la tecnología para transformar la educación y estamos dedicados a construir herramientas que ayuden a los profesores a gestionar sus clases, a los apoderados a mantenerse informados y a los estudiantes a alcanzar su máximo potencial.</p>
+                    </div>
+                );
             default:
-                return <p>Seleccione una pestaña para ver más información.</p>;
+                return <p className="text-light">Seleccione una pestaña para ver más información.</p>
         }
     };
 
@@ -29,44 +44,61 @@ export const Home = () => {
         <div className="container-fluid">
             <nav className="barra-navegacion navbar navbar-expand-lg bg-dark">
                 <div className="container-fluid">
-                    <span className="navbar-text fs-3 font-monospace">Smart Brain</span>
-                    <div className="navbar-collapse">
-                        <span 
-                            className="navbar-text fs-3 font-monospace mx-3" 
-                            onClick={() => handleTabClick("mision")}
-                            style={{ cursor: 'pointer' }}
-                        >
-                            Misión
-                        </span>
-                        <span 
-                            className="navbar-text fs-3 font-monospace mx-3" 
-                            onClick={() => handleTabClick("vision")}
-                            style={{ cursor: 'pointer' }}
-                        >
-                            Visión
-                        </span>
-                        <span 
-                            className="navbar-text fs-3 font-monospace mx-3" 
-                            onClick={() => handleTabClick("quienesSomos")}
-                            style={{ cursor: 'pointer' }}
-                        >
-                            ¿Quiénes Somos?
-                        </span>
+                    <span className="navbar-text fs-3 font-monospace mx-3">Smart Brain</span>
+                    <div className="navbar-collapse collapse justify-content-end">
+                        <ul className="navbar-nav">
+                            <li className="nav-item">
+                                <span 
+                                    className="nav-link text-warning fs-3 font-monospace mx-3" 
+                                    onClick={() => handleTabClick("mision")}
+                                    style={{ cursor: 'pointer' }}
+                                >
+                                    Misión
+                                </span>
+                            </li>
+                            <li className="nav-item">
+                                <span 
+                                    className="nav-link text-warning fs-3 font-monospace mx-3" 
+                                    onClick={() => handleTabClick("vision")}
+                                    style={{ cursor: 'pointer' }}
+                                >
+                                    Visión
+                                </span>
+                            </li>
+                            <li className="nav-item">
+                                <span 
+                                    className="nav-link text-warning fs-3 font-monospace mx-3" 
+                                    onClick={() => handleTabClick("quienesSomos")}
+                                    style={{ cursor: 'pointer' }}
+                                >
+                                    ¿Quiénes Somos?
+                                </span>
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </nav>
             <div className="d-flex justify-content-center align-items-center vh-100">
                 <div className="text-center">
-                    <div id="carouselExampleSlidesOnly" className="carousel slide" data-bs-ride="carousel">
+                    <div id="carouselExampleSlidesOnly" className="carousel slide" data-bs-ride="carousel" data-bs-interval="30000">
                         <div className="carousel-inner">
                             <div className="carousel-item active">
-                                <img src="https://img.freepik.com/vector-gratis/kinder-dibujos-animados_33099-1136.jpg?t=st=1722670167~exp=1722673767~hmac=56e3eee026b9f7e9bc15fa4cdf453ccd3abf47d7a06d4c526039ccc0021605cf&w=826" className="imagen-a" alt="Niños Dibujando" />
+                                <img src="https://img.freepik.com/foto-gratis/desenfoque-lujo-abstracto-degradado-gris-oscuro-negro-utilizado-como-pared-estudio-fondo-mostrar-sus-productos_1258-102010.jpg?t=st=1722835461~exp=1722839061~hmac=3a2ef0f6dc0b29e78c25d2d068c32a85c7846dc09ec2a3f8cac1ae2799e46dc4&w=1380" className="d-block w-100" alt="Misión" />
+                                <div className="carousel-caption d-flex flex-column justify-content-center align-items-center">
+                                    {renderCarouselItemContent()}
+                                </div>
                             </div>
                             <div className="carousel-item">
-                                <img src="https://img.freepik.com/fotos-premium/tres-ninos-jugando-tablas-madera-pizarra-palabra-alfabeto-ella_763111-285296.jpg?w=740" className="imagen-b" alt="Niños Jugando" />
+                                <img src="https://img.freepik.com/foto-gratis/desenfoque-lujo-abstracto-degradado-gris-oscuro-negro-utilizado-como-pared-estudio-fondo-mostrar-sus-productos_1258-102010.jpg?t=st=1722835461~exp=1722839061~hmac=3a2ef0f6dc0b29e78c25d2d068c32a85c7846dc09ec2a3f8cac1ae2799e46dc4&w=1380" className="d-block w-100" alt="Visión" />
+                                <div className="carousel-caption d-flex flex-column justify-content-center align-items-center">
+                                    {renderCarouselItemContent()}
+                                </div>
                             </div>
                             <div className="carousel-item">
-                                <img src="https://img.freepik.com/vector-gratis/ilustracion-jardin-infantes_1284-22416.jpg?t=st=1722671332~exp=1722674932~hmac=79783298245b2dd40ea247c23216a993a8cc42b2bd9ee6e770435293e615ab55&w=740" className="imagen-c" alt="Ilustración de Jardín de Infantes" />
+                                <img src="https://img.freepik.com/foto-gratis/desenfoque-lujo-abstracto-degradado-gris-oscuro-negro-utilizado-como-pared-estudio-fondo-mostrar-sus-productos_1258-102010.jpg?t=st=1722835461~exp=1722839061~hmac=3a2ef0f6dc0b29e78c25d2d068c32a85c7846dc09ec2a3f8cac1ae2799e46dc4&w=1380" className="d-block w-100" alt="¿Quiénes Somos?" />
+                                <div className="carousel-caption d-flex flex-column justify-content-center align-items-center">
+                                    {renderCarouselItemContent()}
+                                </div>
                             </div>
                         </div>
                         <button className="carousel-control-prev" type="button" data-bs-target="#carouselExampleSlidesOnly" data-bs-slide="prev">
@@ -87,9 +119,6 @@ export const Home = () => {
                             <FontAwesomeIcon icon={faUserPlus} className="me-2" />
                             Regístrate como Profesor
                         </button>
-                    </div>
-                    <div className="mt-4">
-                        {renderContent()}
                     </div>
                 </div>
             </div>
