@@ -1,27 +1,19 @@
-@import '~@fortawesome/fontawesome-free/css/all.min.css';
-
-
 body {
   margin: 0;
-  /* Elimina el margen por defecto del body */
   padding: 0;
-  /* Elimina el relleno por defecto del body */
   background-image: url("https://img.freepik.com/vector-gratis/fondo-educacion-estilo-doodle_53876-115365.jpg?t=st=1721693747~exp=1721697347~hmac=35fd53dc2d289a518e17ee2230ee3f6faf595055a7857cb68de819e00a5074b2&w=740");
   background-repeat: no-repeat;
-  /* Evita que la imagen de fondo se repita */
   background-size: cover;
-  /* Hace que la imagen de fondo cubra todo el contenido visible */
   background-position: center;
-  /* Centra la imagen de fondo */
-  height: 100vh;
-  /* Establece la altura del body al 100% del viewport height */
+  min-height: 100vh;
+  /* Asegura que el body tenga al menos la altura del viewport */
+  overflow-x: hidden;
 }
 
 .contenedor-boton {
   margin-top: 200px;
 }
 
-/* Asegúrate de que los botones se apilen en pantallas pequeñas */
 @media (max-width: 576px) {
   .btn {
     display: block;
@@ -42,7 +34,7 @@ body {
   border: 1px solid #266DB6;
   box-sizing: border-box;
   color: #00132C;
-  font-family: "Avenir Next LT W01 Bold",sans-serif;
+  font-family: "Avenir Next LT W01 Bold", sans-serif;
   font-size: 16px;
   font-weight: 700;
   line-height: 24px;
@@ -53,6 +45,7 @@ body {
   -webkit-user-select: none;
   touch-action: manipulation;
 }
+
 .boton-login:before {
   background-color: #D5EDF6;
   content: "";
@@ -75,14 +68,10 @@ body {
   }
 }
 
-
 .boton-login:hover {
   background-color: transparent;
   cursor: pointer;
 }
-
-/* REGISTRO */
-
 
 .boton-registro:before {
   background-color: #d5f6e4;
@@ -116,7 +105,6 @@ body {
   }
 }
 
-
 .boton-registro {
   width: 200px;
   padding: 10px;
@@ -125,7 +113,7 @@ body {
   border: 1px solid #266DB6;
   box-sizing: border-box;
   color: #00132C;
-  font-family: "Avenir Next LT W01 Bold",sans-serif;
+  font-family: "Avenir Next LT W01 Bold", sans-serif;
   font-size: 16px;
   font-weight: 700;
   line-height: 24px;
@@ -140,7 +128,6 @@ body {
 .navbar-text {
   color: #f0ad4e;
 }
-
 
 .carousel-inner {
   position: relative;
@@ -177,8 +164,8 @@ body {
   font-size: 1.2rem; /* Tamaño de fuente para el contenido */
 }
 
-
-
-
-
-
+/* Asegúrate de que el contenedor principal del contenido tenga suficiente espacio para desplazarse */
+.contenedor-principal {
+  padding: 20px;
+  min-height: 100vh; /* Asegura que el contenedor tenga al menos la altura del viewport */
+}
