@@ -2,6 +2,10 @@ import React, { useState, useContext, useEffect } from "react";
 import { Context } from "../store/appContext";
 import { useNavigate } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash, faArrowRight } from "@fortawesome/free-solid-svg-icons"; // Importa los íconos
 
 
 export const HomeProfesor = () => {
@@ -22,8 +26,9 @@ export const HomeProfesor = () => {
     const [apellidoAlumno, setApellidoAlumno] = useState("");
     const [idApoderado, setIdApoderado] = useState("");
     const [estaActivo, setEstaActivo] = useState(false);
-    const [activeTab, setActiveTab] = useState("alumnos"); // Pestaña inicial seleccionada
+    const [activeTab, setActiveTab] = useState("apoderados"); // Pestaña inicial seleccionada
     const navigate = useNavigate();
+    const [showPassword, setShowPassword] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -67,14 +72,18 @@ export const HomeProfesor = () => {
                 setApellidoAlumno("");
                 setIdApoderado("");
                 setEstaActivo(false);
+                toast.success("Alumno agregado con éxito");
+                setActiveTab("asignaturas"); // Cambiar a la pestaña de asignaturas
             } catch (error) {
                 console.error("Error adding alumno", error);
+                toast.error("Error al agregar alumno");
             }
         } else {
-            alert("Por favor, complete todos los campos");
+            toast.error("Por favor, complete todos los campos");
         }
     };
-
+    
+    
     const handleAddApoderado = async () => {
         if (
             nombreApoderado.trim() &&
@@ -101,40 +110,53 @@ export const HomeProfesor = () => {
                 setContrasenaApoderado("");
                 setTelefonoApoderado("");
                 setDireccionApoderado("");
+                toast.success("Apoderado agregado con éxito");
+                setActiveTab("alumnos"); // Cambiar a la pestaña de alumnos
             } catch (error) {
                 console.error("Error adding apoderado", error);
+                toast.error("Error al agregar apoderado");
             }
         } else {
-            alert("Por favor, complete todos los campos");
+            toast.error("Por favor, complete todos los campos");
         }
     };
-
+    
+    
     const handleAddAsignatura = async () => {
         if (asignatura.trim() === "") {
-            alert("El nombre de la asignatura no puede estar vacío");
+            toast.error("El nombre de la asignatura no puede estar vacío");
             return;
         }
         try {
             const profesorId = localStorage.getItem("userId");
             await actions.addAsignatura(profesorId, asignatura);
             setAsignatura("");
+            toast.success("Asignatura agregada con éxito");
+            setActiveTab("calificaciones"); // Cambiar a la pestaña de calificaciones
         } catch (error) {
             console.error("Error adding asignatura", error);
+            toast.error("Error al agregar asignatura");
         }
     };
-
+    
+    
     const handleAddCalificacion = async () => {
         if (idAlumno && idAsignatura && calificacion.trim() !== "") {
             try {
                 await actions.addCalificacion(idAlumno, idAsignatura, calificacion);
                 setCalificacion("");
+                toast.success("Calificación agregada con éxito");
+                setActiveTab("recomendaciones"); // Cambiar a la pestaña de recomendaciones
             } catch (error) {
                 console.error("Error adding calificacion", error);
+                toast.error("Error al agregar calificación");
             }
         } else {
-            alert("Por favor, complete todos los campos");
+            toast.error("Por favor, complete todos los campos");
         }
     };
+    
+    
 
     const handleGenerateRecomendacion = async () => {
         try {
@@ -142,13 +164,15 @@ export const HomeProfesor = () => {
             if (data.recomendacion) {
                 setRecomendacion(data.recomendacion);
                 setMensaje(null);
+                toast.success("Recomendación generada con éxito");
             } else if (data.mensaje) {
                 setMensaje(data.mensaje);
                 setRecomendacion(null);
+                toast.error(data.mensaje);
             }
-            alert("Recomendación generada con éxito");
         } catch (error) {
             console.error("Error al generar recomendación:", error);
+            toast.error("Error al generar la recomendación");
         }
     };
 
@@ -261,14 +285,17 @@ export const HomeProfesor = () => {
                                     onChange={(e) => setCorreoApoderado(e.target.value)}
                                 />
                             </div>
-                            <div className="mb-3">
+                            <div className="input-group mb-3">
                                 <input
-                                    type="password"
+                                    type={showPassword ? "text" : "password"}
                                     className="form-control"
-                                    placeholder="Contraseña"
+                                    id="password"
                                     value={contrasenaApoderado}
                                     onChange={(e) => setContrasenaApoderado(e.target.value)}
                                 />
+                                <span className="input-group-text" onClick={() => setShowPassword(!showPassword)} style={{ cursor: 'pointer' }}>
+                                <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
+                            </span>
                             </div>
                             <div className="mb-3">
                                 <input
@@ -419,19 +446,19 @@ export const HomeProfesor = () => {
                     <div className="collapse navbar-collapse" id="navbarSupportedContent">
                         <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                             <li className="nav-item">
-                                <a className={`nav-link ${activeTab === "apoderados" ? "active" : ""}`} href="#" onClick={() => setActiveTab("apoderados")}>Apoderados</a>
+                                <a className={`nav-link ${activeTab === "apoderados" ? "active" : ""}`} href="#" onClick={() => setActiveTab("apoderados")}>1. Apoderados <FontAwesomeIcon className="ms-2" icon={faArrowRight} /></a>
                             </li>
                             <li className="nav-item">
-                                <a className={`nav-link ${activeTab === "alumnos" ? "active" : ""}`} href="#" onClick={() => setActiveTab("alumnos")}>Alumnos</a>
+                                <a className={`nav-link ${activeTab === "alumnos" ? "active" : ""}`} href="#" onClick={() => setActiveTab("alumnos")}>2. Alumnos <FontAwesomeIcon className="ms-2" icon={faArrowRight} /> </a>
                             </li>
                             <li className="nav-item">
-                                <a className={`nav-link ${activeTab === "asignaturas" ? "active" : ""}`} href="#" onClick={() => setActiveTab("asignaturas")}>Asignaturas</a>
+                                <a className={`nav-link ${activeTab === "asignaturas" ? "active" : ""}`} href="#" onClick={() => setActiveTab("asignaturas")}>3. Asignaturas <FontAwesomeIcon className="ms-2" icon={faArrowRight} /></a>
                             </li>
                             <li className="nav-item">
-                                <a className={`nav-link ${activeTab === "calificaciones" ? "active" : ""}`} href="#" onClick={() => setActiveTab("calificaciones")}>Calificaciones</a>
+                                <a className={`nav-link ${activeTab === "calificaciones" ? "active" : ""}`} href="#" onClick={() => setActiveTab("calificaciones")}>4. Calificaciones <FontAwesomeIcon className="ms-2" icon={faArrowRight} /></a>
                             </li>
                             <li className="nav-item">
-                                <a className={`nav-link ${activeTab === "recomendaciones" ? "active" : ""}`} href="#" onClick={() => setActiveTab("recomendaciones")}>Recomendaciones</a>
+                                <a className={`nav-link ${activeTab === "recomendaciones" ? "active" : ""}`} href="#" onClick={() => setActiveTab("recomendaciones")}>5. Recomendaciones <FontAwesomeIcon className="ms-2" icon={faArrowRight} /></a>
                             </li>
                         </ul>
                         <div className="d-flex justify-content-end">

@@ -4,6 +4,8 @@ import { Context } from "../store/appContext";
 import "../../styles/register.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons"; // Importa los íconos
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export const RegisterTeacher = () => {
     const [email, setEmail] = useState("");
@@ -20,21 +22,21 @@ export const RegisterTeacher = () => {
     const handleRegister = async (event) => {
         event.preventDefault();
         if (!email || !password || !firstName || !lastName || !title || !specialization) {
-            setMessage("Por favor, completa todos los campos.");
+            toast.error("Por favor, completa todos los campos.");
             return;
         }
         try {
             await actions.registerProfessor(firstName, lastName, email, password, title, specialization);
-            setMessage("Profesor registrado con éxito");
+            toast.success("Profesor registrado con éxito");
             setTimeout(() => {
                 navigate('/login');  // Redirige a la página de inicio de sesión
             }, 3000);
         } catch (error) {
-            setMessage(`Error registrando profesor: ${error.message}`);
+            toast.error(`Error registrando profesor: ${error.message}`);
             console.error("Error registrando profesor", error);
         }
     };
-
+    
     return (
         <div className="contenedor-principal-form">
             <div className="contenedor-form container py-5">
