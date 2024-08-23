@@ -1,6 +1,8 @@
 import React, { useState, useContext, useEffect } from "react";
 import { Context } from "../store/appContext";
 import { useNavigate } from 'react-router-dom';
+import ReactMarkdown from 'react-markdown';
+
 
 export const HomeProfesor = () => {
     const { store, actions } = useContext(Context);
@@ -396,9 +398,9 @@ export const HomeProfesor = () => {
                                 ))}
                             </select>
                         </div>
-                        <button className="btn btn-primary" onClick={handleGenerateRecomendacion}>Generar Recomendación</button>
+                        <button className="btn btn-primary mb-4" onClick={handleGenerateRecomendacion}>Generar Recomendación</button>
                         {mensaje && <p>{mensaje}</p>}
-                        {recomendacion && <p>{recomendacion}</p>}
+                        {recomendacion && <ReactMarkdown>{recomendacion}</ReactMarkdown>}
                     </div>
                 );
             default:
@@ -439,7 +441,7 @@ export const HomeProfesor = () => {
                 </div>
             </nav>
             <div className="container mt-4">
-                <div className="border border-secondary rounded p-4 bg-light">
+                <div className="border border-secondary rounded p-4 bg-light mb-4">
                     {renderContent()}
                 </div>
             </div>

@@ -1,6 +1,7 @@
 import React, { useState, useContext, useEffect } from "react";
 import { Context } from "../store/appContext";
 import { useNavigate } from 'react-router-dom';
+import ReactMarkdown from 'react-markdown';
 
 export const HomeApoderado = () => {
     const { store, actions } = useContext(Context);
@@ -63,13 +64,13 @@ export const HomeApoderado = () => {
                         ))}
                     </ul>
                 </div>
-                <div className="border border-secondary rounded p-4 bg-light mt-4">
+                <div className="border border-secondary rounded p-4 bg-light mt-4 mb-4">
                     <h2>Recomendaciones</h2>
                     <ul>
                         {recomendacion.length > 0 ? (
                             recomendacion.map(recomendacion => (
                                 <li key={recomendacion.id}>
-                                    {recomendacion.recomendacion}
+                                    <ReactMarkdown>{recomendacion.recomendacion}</ReactMarkdown>
                                 </li>
                             ))
                         ) : (
