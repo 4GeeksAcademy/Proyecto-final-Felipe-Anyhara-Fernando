@@ -172,7 +172,7 @@ export const HomeProfesor = () => {
             }
         } catch (error) {
             console.error("Error al generar recomendación:", error);
-            toast.error("Error al generar la recomendación");
+            toast.error("La calificación esta por sobre el rango minimo exigido, por consecuencia no se requieren recomendaciones.");
         }
     };
 
@@ -458,7 +458,7 @@ export const HomeProfesor = () => {
                                 <a className={`nav-link ${activeTab === "calificaciones" ? "active" : ""}`} href="#" onClick={() => setActiveTab("calificaciones")}>4. Calificaciones <FontAwesomeIcon className="ms-2" icon={faArrowRight} /></a>
                             </li>
                             <li className="nav-item">
-                                <a className={`nav-link ${activeTab === "recomendaciones" ? "active" : ""}`} href="#" onClick={() => setActiveTab("recomendaciones")}>5. Recomendaciones <FontAwesomeIcon className="ms-2" icon={faArrowRight} /></a>
+                                <a className={`nav-link ${activeTab === "recomendaciones" ? "active" : ""}`} href="#" onClick={() => setActiveTab("recomendaciones")}>5. Recomendaciones</a>
                             </li>
                         </ul>
                         <div className="d-flex justify-content-end">
