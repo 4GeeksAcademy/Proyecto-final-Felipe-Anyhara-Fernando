@@ -64,15 +64,38 @@ const getState = ({ getStore, getActions, setStore }) => {
             },
 
             obtenerRecomendaciones: async (idAlumno) => {
+                console.log(idAlumno)
+                const {recomendaciones} = getStore()
                 const backendUrl = process.env.BACKEND_URL;
                 try {
                     const response = await fetch(`${backendUrl}/api/recomendaciones/${idAlumno}`);
+
+                    // Verificar si la respuesta es OK (status code 200-299)
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
+
+                    // Capturar el texto crudo de la respuesta para verificar su contenido
                     const data = await response.json();
-                    setStore({ recomendaciones: data });
-                    console.log("Recomendaciones fetched successfully", data);
+
+                    // Intentar parsear el texto como JSON
+                    try {
+                        console.log(data)
+
+                        // Verificar si los datos obtenidos son un array
+                        if (Array.isArray(data)) {
+                            const newRecomendaciones = recomendaciones.concat(data)
+                            setStore({ recomendaciones: newRecomendaciones });
+                            console.log("Recomendaciones fetched successfully", data);
+                        } else {
+                            console.error("Las recomendaciones obtenidas no son un array:", data);
+                            setStore({ recomendaciones: [] });
+                        }
+                    } catch (jsonError) {
+                        // Si no se puede parsear como JSON, mostrar el contenido de la respuesta
+                        console.error("Error parsing JSON:", jsonError);
+                        console.error("Raw response:", textResponse);
+                    }
                 } catch (error) {
                     console.error("Error fetching recomendaciones", error);
                 }
@@ -101,11 +124,17 @@ const getState = ({ getStore, getActions, setStore }) => {
                     throw error;
                 }
             },
-    
+
             obtenerAlumnoAsignaturasPorId: async (id_alumno) => {
                 const backendUrl = process.env.BACKEND_URL;
                 try {
-                    const response = await fetch(`${backendUrl}/api/alumno_asignaturas/${id_alumno}`);
+                    const response = await fetch(`${backendUrl}/api/alumno_asignaturas/${id_alumno}`, {
+                        method: "GET",
+                        headers: {
+                            "content-type": "application/json",
+                            "Authorization": `Bearer ${sessionStorage.getItem("accessToken")}`
+                        }
+                    });
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
@@ -215,7 +244,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     throw error;
                 }
             },
-           
+
             addAsignatura: async (profesorId, nombreAsignatura) => {
                 const backendUrl = process.env.BACKEND_URL;
                 if (!profesorId || !nombreAsignatura) {
@@ -235,7 +264,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                         const errorData = await response.json();
                         throw new Error(errorData.mensaje || `HTTP error! status: ${response.status}`);
                     }
-            
+
                     const data = await response.json();
                     const store = getStore();
                     setStore({ asignaturas: [...store.asignaturas, data] });
@@ -255,7 +284,9 @@ const getState = ({ getStore, getActions, setStore }) => {
                 try {
                     const response = await fetch(`${backendUrl}/api/alumno_asignaturas`, {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
+                        mode: 'cors',  // Añadir este campo
+                        headers: { 'Content-Type': 'application/json'
+                        ,"Authorization": `Bearer ${sessionStorage.getItem("accessToken")}`},
                         body: JSON.stringify({
                             id_alumno: idAlumno,
                             id_asignatura: idAsignatura,
@@ -266,7 +297,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                         const errorData = await response.json();
                         throw new Error(errorData.mensaje || `HTTP error! status: ${response.status}`);
                     }
-            
+
                     const data = await response.json();
                     const store = getStore();
                     setStore({ calificaciones: [...store.calificaciones, data] });
@@ -287,7 +318,9 @@ const getState = ({ getStore, getActions, setStore }) => {
                 try {
                     const response = await fetch(`${backendUrl}/api/gemini`, {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: { 'Content-Type': 'application/json',
+                            "Authorization": `Bearer ${sessionStorage.getItem("accessToken")}`
+                         },
                         body: JSON.stringify({
                             id_alumno: idAlumno,
                             id_asignatura: idAsignatura,
@@ -297,7 +330,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                         const errorData = await response.json();
                         throw new Error(errorData.mensaje || `HTTP error! status: ${response.status}`);
                     }
-            
+
                     const data = await response.json();
                     console.log("Recomendación añadida con éxito", data);
                     return data;
@@ -310,7 +343,13 @@ const getState = ({ getStore, getActions, setStore }) => {
             obtenerAlumnoAsignaturas: async () => {
                 const backendUrl = process.env.BACKEND_URL;
                 try {
-                    const response = await fetch(`${backendUrl}/api/alumno_asignaturas`);
+                    const response = await fetch(`${backendUrl}/api/alumnos_asignaturas_por_apoderados`, {
+                        method: "GET",
+                        headers: {
+                            "content-type": "application/json",
+                            "Authorization": `Bearer ${sessionStorage.getItem("accessToken")}`
+                        }
+                    });
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
@@ -321,7 +360,26 @@ const getState = ({ getStore, getActions, setStore }) => {
                     console.error("Error fetching calificaciones", error);
                 }
             },
-            
+
+            obtenerAlumnoAsignaturasProfesor: async () => {
+                const backendUrl = process.env.BACKEND_URL;
+                try {
+                    const response = await fetch(`${backendUrl}/api/alumno_asignaturas`, {
+                        method: "GET",
+                        headers: {'Content-Type': 'application/json', "Authorization": `Bearer ${sessionStorage.getItem("accessToken")}`}
+                    });
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const data = await response.json();
+                    console.log(data);
+                    setStore({ calificaciones: data });
+                    console.log("Calificaciones fetched successfully", data);
+                } catch (error) {
+                    console.error("Error fetching calificaciones", error);
+                }
+            },
+
             getProfesores: async () => {
                 const backendUrl = process.env.BACKEND_URL;
                 try {
@@ -333,7 +391,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                         const errorData = await response.json();
                         throw new Error(errorData.mensaje || `HTTP error! status: ${response.status}`);
                     }
-            
+
                     const data = await response.json();
                     return data;
                 } catch (error) {
@@ -372,7 +430,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                         const errorData = await response.json();
                         throw new Error(errorData.mensaje || `HTTP error! status: ${response.status}`);
                     }
-            
+
                     const data = await response.json();
                     setStore({ asignaturas: data });
                     return data;
@@ -381,7 +439,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     throw error;
                 }
             },
-            
+
             registerAlumno: async (nombre, apellido, idApoderado, estaActivo = false) => {
                 const backendUrl = process.env.BACKEND_URL;
                 if (!nombre || !apellido || !idApoderado) {
@@ -403,7 +461,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                         const errorData = await response.json();
                         throw new Error(errorData.mensaje || `HTTP error! status: ${response.status}`);
                     }
-    
+
                     const data = await response.json();
                     const store = getStore();
                     setStore({ alumnos: [...store.alumnos, data] });
@@ -434,7 +492,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     throw error;
                 }
             },
-            
+
         }
     };
 };
