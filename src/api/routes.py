@@ -9,7 +9,7 @@ import google.generativeai as genai
 import os
 from flask import Blueprint, request, jsonify
 from werkzeug.security import check_password_hash
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
 from api.models import Apoderado, Profesor, db
 
 load_dotenv
@@ -255,8 +255,11 @@ def obtener_alumnos():
     return jsonify([alumno.serialize() for alumno in alumnos]), 200
 
 @api.route('/alumno_asignaturas', methods=['POST'])
+@jwt_required()
 def agregar_alumno_asignatura():
     data = request.get_json()
+    info = get_jwt_identity()
+    print(info)
 
     # Validar datos requeridos
     id_alumno = data.get('id_alumno')
@@ -288,11 +291,41 @@ def agregar_alumno_asignatura():
     return jsonify(nuevo_registro.serialize()), 201
 
 @api.route('/alumno_asignaturas', methods=['GET'])
+@jwt_required()
 def obtener_alumno_asignaturas():
+    info = get_jwt_identity()
+    print(info)
     registros = (
         db.session.query(AlumnoAsignatura, Alumno, Asignatura)
         .join(Alumno, AlumnoAsignatura.id_alumno == Alumno.id)
         .join(Asignatura, AlumnoAsignatura.id_asignatura == Asignatura.id)
+        .all()
+    )
+    
+    result = []
+    for registro, alumno, asignatura in registros:
+        result.append({
+            "id": registro.id,
+            "id_alumno": registro.id_alumno,
+            "nombre_alumno": alumno.nombre,
+            "apellido_alumno": alumno.apellido,
+            "id_asignatura": registro.id_asignatura,
+            "nombre_asignatura": asignatura.nombre,
+            "calificacion": registro.calificacion
+        })
+    
+    return jsonify(result), 200
+
+@api.route('/alumnos_asignaturas_por_apoderados', methods=['GET'])
+@jwt_required()
+def obtener_alumnos_asignaturas_por_apoderados():
+    info = get_jwt_identity()
+    print(info)
+    registros = (
+        db.session.query(AlumnoAsignatura, Alumno, Asignatura)
+        .join(Alumno, AlumnoAsignatura.id_alumno == Alumno.id)
+        .join(Asignatura, AlumnoAsignatura.id_asignatura == Asignatura.id)
+        .filter(Alumno.id_apoderado==info["id"])
         .all()
     )
     
@@ -372,6 +405,7 @@ def obtener_recomendaciones(id_alumno):
     return jsonify(result), 200
 
 @api.route('/alumno_asignaturas/<int:id_alumno>', methods=['GET'])
+@jwt_required()
 def obtener_alumno_asignaturas_por_id_alumno(id_alumno):
     # Consultar todas las recomendaciones para el alumno especificado
     registros = AlumnoAsignatura.query.filter_by(id_alumno=id_alumno).all()

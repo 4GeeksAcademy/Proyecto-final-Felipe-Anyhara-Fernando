@@ -36,7 +36,7 @@ export const HomeProfesor = () => {
                 await actions.getAsignaturas();
                 await actions.getAlumnos();
                 await actions.getApoderados();
-                await actions.obtenerAlumnoAsignaturas(); // Obtener todas las calificaciones
+                await actions.obtenerAlumnoAsignaturasProfesor(); // Obtener todas las calificaciones
             } catch (error) {
                 console.error("Error fetching data", error);
             }
