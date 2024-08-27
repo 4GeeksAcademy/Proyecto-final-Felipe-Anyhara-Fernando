@@ -1,0 +1,13 @@
+body {
+    font-family: "Avenir Next LT W01 Bold", sans-serif;
+    margin: 0;
+    padding: 0;
+    background-image: url("https://img.freepik.com/vector-gratis/fondo-educacion-estilo-doodle_53876-115365.jpg?t=st=1721693747~exp=1721697347~hmac=35fd53dc2d289a518e17ee2230ee3f6faf595055a7857cb68de819e00a5074b2&w=740");
+    background-repeat: no-repeat;
+    background-size: cover; /* Ajusta a "cover" para cubrir toda la pantalla sin deformarse */
+    background-attachment: fixed; /* Mantiene el fondo fijo al hacer scroll */
+    background-position: center;
+    min-height: 100vh; /* Asegura que el body tenga al menos la altura del viewport */
+    height: 100%; /* Evita que el fondo se deforme al alargarse la pantalla */
+    overflow-x: hidden;
+}

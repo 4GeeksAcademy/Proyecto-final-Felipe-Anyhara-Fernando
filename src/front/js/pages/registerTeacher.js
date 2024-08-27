@@ -39,7 +39,7 @@ export const RegisterTeacher = () => {
     
     return (
         <div className="contenedor-principal-form">
-            <div className="contenedor-form container py-5">
+            <div className="contenedor-form container">
                 <h3 className="titulo-form mb-4">Registrar Profesor</h3>
                 <form onSubmit={handleRegister}>
                     <div className="mb-3">
