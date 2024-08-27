@@ -39,7 +39,8 @@ const getState = ({ getStore, getActions, setStore }) => {
                 try {
                     const resp = await fetch(`${process.env.BACKEND_URL}/api/login`, {
                         method: "POST",
-                        headers: { "Content-Type": "application/json" },
+                        headers: { "content-type": "application/json",
+                            "Authorization": `Bearer ${sessionStorage.getItem("accessToken")}` },
                         body: JSON.stringify({ correo_electronico: email, contrasena: password })
                     });
                     const data = await resp.json();
@@ -108,7 +109,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 
                     const resp = await fetch(`${process.env.BACKEND_URL}/api/private`, {
                         method: "GET",
-                        headers: { Authorization: `Bearer ${token}` }
+                        headers: { "content-type": "application/json",
+                            "Authorization": `Bearer ${sessionStorage.getItem("accessToken")}` }
                     });
                     const data = await resp.json();
                     if (!resp.ok) throw new Error(data.msg || "Error en la obtención de datos");
@@ -170,7 +172,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 
                     const response = await fetch(apiUrl, {
                         method: "GET",
-                        headers: { "Authorization": `Bearer ${token}` }
+                        headers: { "content-type": "application/json",
+                            "Authorization": `Bearer ${sessionStorage.getItem("accessToken")}` }
                     });
                     if (!response.ok) throw new Error("Network response was not ok");
 
@@ -187,7 +190,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                 try {
                     const response = await fetch(`${backendUrl}/api/register/guardian`, {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: { 'Content-Type': 'application/json',"Authorization": `Bearer ${sessionStorage.getItem("accessToken")}` },
                         body: JSON.stringify({
                             nombre,
                             apellido,
@@ -218,7 +221,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                 try {
                     const response = await fetch(`${backendUrl}/api/register/teacher`, {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: { 'Content-Type': 'application/json',"Authorization": `Bearer ${sessionStorage.getItem("accessToken")}` },
                         body: JSON.stringify({
                             nombre,
                             apellido,
@@ -254,7 +257,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                 try {
                     const response = await fetch(`${backendUrl}/api/asignaturas`, {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: { 'Content-Type': 'application/json',"Authorization": `Bearer ${sessionStorage.getItem("accessToken")}` },
                         body: JSON.stringify({
                             id_profesor: profesorId,
                             nombre: nombreAsignatura
@@ -385,7 +388,8 @@ const getState = ({ getStore, getActions, setStore }) => {
                 try {
                     const response = await fetch(`${backendUrl}/api/teachers`, {
                         method: 'GET',
-                        headers: { 'Content-Type': 'application/json' }
+                        headers: { "content-type": "application/json",
+                            "Authorization": `Bearer ${sessionStorage.getItem("accessToken")}` }
                     });
                     if (!response.ok) {
                         const errorData = await response.json();
@@ -404,7 +408,8 @@ const getState = ({ getStore, getActions, setStore }) => {
                 try {
                     const response = await fetch(`${backendUrl}/api/guardians`, {
                         method: 'GET',
-                        headers: { 'Content-Type': 'application/json' }
+                        headers: { "content-type": "application/json",
+                            "Authorization": `Bearer ${sessionStorage.getItem("accessToken")}` }
                     });
                     if (!response.ok) {
                         const errorData = await response.json();
@@ -424,7 +429,8 @@ const getState = ({ getStore, getActions, setStore }) => {
                 try {
                     const response = await fetch(`${backendUrl}/api/asignaturas`, {
                         method: 'GET',
-                        headers: { 'Content-Type': 'application/json' }
+                        headers: { "content-type": "application/json",
+                            "Authorization": `Bearer ${sessionStorage.getItem("accessToken")}` }
                     });
                     if (!response.ok) {
                         const errorData = await response.json();
@@ -449,7 +455,8 @@ const getState = ({ getStore, getActions, setStore }) => {
                 try {
                     const response = await fetch(`${backendUrl}/api/alumnos`, {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: { "content-type": "application/json",
+                            "Authorization": `Bearer ${sessionStorage.getItem("accessToken")}` },
                         body: JSON.stringify({
                             nombre,
                             apellido,
@@ -477,7 +484,8 @@ const getState = ({ getStore, getActions, setStore }) => {
                 try {
                     const response = await fetch(`${backendUrl}/api/alumnos`, {
                         method: 'GET',
-                        headers: { 'Content-Type': 'application/json' }
+                        headers: { "content-type": "application/json",
+                            "Authorization": `Bearer ${sessionStorage.getItem("accessToken")}` }
                     });
                     if (!response.ok) {
                         const errorData = await response.json();

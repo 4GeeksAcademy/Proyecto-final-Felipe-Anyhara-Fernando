@@ -62,7 +62,7 @@ export const Home = () => {
 
     return (
         <div className="container-fluid">
-            <nav className="navbar">
+            <nav className="navbar bg-dark bg-gradient">
                 <div className="navbar-brand text-warning">Smart BRAIN</div>
                 <div className="navbar-links">
                     <button className="nav-link text-warning fw-bold" onClick={() => handleShowModal("mision")}>Misión</button>
